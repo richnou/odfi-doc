@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="file:///local/home/rleys/projects/phd/doc/docbook/spec-xsl/spec-root.xsl"?>
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://docbook.org/ns/docbook ../xsd/docbook-5.0.xsd ">
+
+    <info>
+        <title>Exelerate Specification</title>
+
+        <author>
+            <personname>Richard Leys</personname>
+            <email>richard.leys@ziti-uni-heidelberg.de</email>
+        </author>
+
+        <!-- ## Revision History -->
+        <revhistory>
+            <revision>
+                <date>21-09-2011</date>
+                <revdescription>
+                    <para>First draft of this document</para>
+                </revdescription>
+            </revision>
+            <revision>
+                <date>12-09-2011</date>
+                <revdescription>
+                    <para>First draft of this document</para>
+                </revdescription>
+            </revision>
+            <revision>
+                <date>28-09-2011</date>
+                <revdescription>
+                    <para>First draft of this document</para>
+                </revdescription>
+            </revision>
+        </revhistory>
+
+        <!-- Abstract -->
+        <abstract>
+            <para>
+                The
+                This is the Exelerate Spec intended to provide full
+                details on using/designing an accelerator for the
+                extoll's exelerate interface
+            </para>
+        </abstract>
+
+        <org>
+            <orgname>Extoll GmbH</orgname>
+        </org>
+        <org>
+            <orgname>Universität Heidelberg</orgname>
+        </org>
+        
+        <!-- Legal notice and copyrighting -->
+        <legalnotice>
+            <para>This document is confidential blablabla</para>
+        </legalnotice>
+        <copyright>
+            <year>2011</year>
+            <holder>Extoll GmbH</holder>
+            <holder>Universität Heidelberg</holder>
+        </copyright>
+        
+
+    </info>
+
+
+    <!-- Add A table of content -->
+    <toc></toc>
+
+    <section>
+        <title>First section</title>
+
+        <para>
+            This is a first section
+        </para>
+        
+        <figure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="../pcie_bridge.svg" width="90%"></imagedata>
+                </imageobject>
+            </mediaobject>
+            <caption>PCie Bridge Architecture</caption>
+        </figure>
+        
+
+        <section>
+            <title>Sub Section</title>
+            <para>A subsection</para>
+
+            <section>
+                <title>Sub Sub Section</title>
+                <para>A subsubsection</para>
+            </section>
+
+        </section>
+
+        <section>
+            <title>Second sub section</title>
+            <para>T</para>
+        </section>
+
+    </section>
+
+    <section>
+        <title>A Section</title>
+        <para>A section</para>
+    </section>
+
+    <section>
+        <title>A Section</title>
+        <para>A section</para>
+    </section>
+
+    <section>
+        <title>A Section</title>
+        <para>A section</para>
+    </section>
+
+
+</article>
