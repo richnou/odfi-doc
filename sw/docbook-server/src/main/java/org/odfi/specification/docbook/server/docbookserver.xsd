@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	targetNamespace="urn:org:odfi:specification:docbook-server"
+	xmlns:tns="urn:org:odfi:specification:docbook-server" elementFormDefault="qualified">
+	
+	
+	<element name="DocbookServer">
+		<complexType>
+			<sequence>
+				<!-- Docbooks -->
+				<element ref="tns:DocbookGroup"></element>
+				
+				<!-- Stylesheet Repositories -->
+				<element ref="tns:StylesheetRepositories"></element>
+			</sequence>
+		</complexType>
+	</element>
+	
+	<element name="StylesheetRepositories">
+		<complexType>
+			<sequence>
+				<element name="Repository" type="string" maxOccurs="unbounded" minOccurs="0"></element>
+			</sequence>
+		</complexType>
+	</element>
+	
+	<element name="DocbookGroup">
+		<annotation>
+			<documentation>Contains A book or groups of books</documentation>
+		</annotation>
+		<complexType>
+			<sequence>
+				<element ref="tns:DocbookGroup" minOccurs="0" maxOccurs="unbounded"></element>
+				<element ref="tns:Docbook" minOccurs="0" maxOccurs="unbounded"></element>
+			</sequence>
+			<attribute name="name" use="required" type="string"></attribute>
+		</complexType>
+	</element>
+	
+	<element name="Docbook" type="string">
+		<annotation>
+			<documentation>Contains path to a docbook top</documentation>
+		</annotation>
+	</element>
+	
+</schema>

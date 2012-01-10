@@ -1,0 +1,27 @@
+@CHARSET "UTF-8";
+
+body {
+	
+    font-family: Sans Serif;
+    font-size: 10.5pt;
+		
+}
+
+
+.Navigation {
+	
+    /*float: left;*/
+    width: 250px;
+    margin-right:20px;
+    vertical-align: text-top;
+}
+
+.Body {
+	
+
+	width: 800px;
+	padding: 20px;
+	/*margin-left: 270px;*/
+	border: 1px gray solid;
+	
+}

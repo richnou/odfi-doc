@@ -1,0 +1,242 @@
+// Global definitions
+//----------------------------
+
+.rounded-corners (@radius: 5px) {
+  border-radius: @radius;
+  -webkit-border-radius: @radius;
+  -moz-border-radius: @radius;
+}
+
+
+//---- Colors
+//-----------------------
+@color-lightblue:       #E0E6F8;
+@color-darkblue:		#084B8A;
+
+//---- Font
+//------------------
+@font-size-small-title: 12pt;
+@font-size-default:     11.5pt;
+@font-size-smaller:     10pt;
+
+@font-color-title:      #084B8A;
+@font-color-default:    #424242;
+@font-color-default:    black;
+
+
+//---- Layout sizes
+//---------------------
+@layout-middle-width:       60%;
+@layout-flying-menu-width:  18%;
+
+
+
+// Titling
+//--------------
+@titling-indent: 10px;
+
+.h {
+	color: @font-color-title;
+}
+
+h1 {
+	.h;
+	text-indent: 0px;
+	
+}
+
+h2 {
+	.h;
+	text-indent: @titling-indent*2;
+}
+h3 {
+	.h;
+    text-indent: @titling-indent*3;
+}
+h4 {
+    .h;
+    text-indent: @titling-indent*4;
+}
+h5 {
+	.h;
+    text-indent: @titling-indent*5;
+}
+h6 {
+	.h;
+    text-indent: @titling-indent*6;
+}
+
+
+// Layout
+//---------------------
+
+
+html {
+    
+    font-family:   sans-serif;
+    font-size  :   @font-size-default;
+    color      :   @font-color-default;
+    
+    background-color: #E6E6E6;
+}
+
+
+body {
+	
+	//-- Page in the middle
+	width: @layout-middle-width;
+	margin: auto;
+	
+	padding: 10px;
+	margin-top:10px;
+
+    //-- Border around
+    .rounded-corners;
+    border: 2px black solid;
+    
+    //-- White Background
+    background-color: white;
+   
+    
+	
+}
+
+// Spec Info
+//---------------------------
+.spec-info {
+	
+	h1 {
+	
+	   font-style: bold;
+	   font-size: @font-size-small-title;
+	}
+	
+}
+
+.spec-info-revhistory {
+	
+	table {
+	 border-collapse:collapse;
+	}
+	
+	table, th, td {
+	   border: 1px solid black;
+	}
+	
+	
+}
+
+.spec-info-abstract {
+	
+	font-size: @font-size-smaller;
+	
+}
+
+// TOC
+//------------------
+
+.toc {
+	
+	.rounded-corners;
+	
+	padding:   5px;
+	margin:    5px;
+	
+	background-color: @color-lightblue;
+	
+}
+
+.toc-title {
+	
+	.h;
+	font-size: large;
+	
+}
+
+
+// Flying Menu
+//--------------------
+.spec-flying-menu {
+	
+	//-- Don't show per default
+	display: block;
+	position:fixed;
+	top:10px;
+	left: 10px;
+	
+	
+	width: @layout-flying-menu-width;
+	border: 1px black solid;
+	
+}
+
+// Content Formatting
+//------------------------------
+.spec-formatting-emphasis {
+
+	font-weight: bold;
+}
+
+.spec-format-bold {
+    font-weight: bold;
+}
+
+.spec-format-bg-lightblue {
+
+    background-color: @color-lightblue;
+}
+
+// Content objects
+//--------------------------------
+
+//---- Table
+//------------------
+.table-container {
+	
+	width:80%;
+	margin:auto;
+	
+}
+table {
+	width: 100%;
+	margin-left:auto; 
+    margin-right:auto;
+	border-collapse: collapse;
+	
+}
+table ,th ,td {
+	
+	border: 1px black solid;
+	margin: 5px;
+}
+
+table td {
+	padding: 3px;
+}
+
+table thead td {
+	
+	text-align: center;
+	background-color: @color-darkblue;
+	color: white;
+	
+}
+
+table tbody td {
+	
+	text-align: center;
+	
+}
+
+table caption {
+
+    text-align: center;
+    font-style: italic;
+}
+
+.spec-table-alternate1 {
+	
+	background-color: #CCCCCC;
+	
+}
+

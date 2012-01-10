@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin
+>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="uni.hd.cag.eclipse.tools.docbook.DocbookStartup"></startup>
+   </extension>
+   <extension
+         name="Docbook Preference Pages"
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="uni.hd.cag.eclipse.tools.docbook.builder.preferences.DocBookPreferencePage"
+            id="uni.hd.cag.tools.docbook.preferences.global"
+            name="Docbook">
+      </page>
+   </extension>
+
+   <extension
+         id="uni.hd.cag.tools.docbook.builder"
+         name="CAG Docbook Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true"
+            isConfigurable="true">
+         <run
+               class="uni.hd.cag.eclipse.tools.docbook.builder.DocbookBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="uni.hd.cag.tools.docbook.nature"
+         name="CAG Docbook Project Nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="uni.hd.cag.eclipse.tools.docbook.builder.DocbookNature">
+         </run>
+      </runtime>
+      <builder
+            id="uni.hd.cag.tools.docbook.builder">
+      </builder>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="true"
+            objectClass="org.eclipse.core.resources.IProject"
+            nameFilter="*"
+            id="uni.hd.cag.tools.docbook.ui.projectMenu">
+         <menu
+               id="uni.hd.cag.tools.docbook.cagGroup"
+               label="CAG"
+               path="CAG">
+            <separator
+                  name="cag-tools.separator1">
+            </separator>
+         </menu>
+         <action
+               label="Add CAG Docbook Nature"
+               class="uni.hd.cag.eclipse.tools.docbook.builder.ToggleNatureAction"
+               menubarPath="uni.hd.cag.tools.docbook.cagGroup/Docbook"
+               enablesFor="+"
+               id="cag-tools.docbook.addNatureAction">
+            <enablement>
+               <not>
+                  <objectState
+                        name="nature"
+                        value="uni.hd.cag.tools.docbook.nature">
+                  </objectState>
+               </not>
+            </enablement>
+         </action>
+         <action
+               class="uni.hd.cag.eclipse.tools.docbook.builder.ToggleNatureAction"
+               enablesFor="+"
+               id="cag-tools.docbook.removeNatureAction"
+               label="Remove CAG Docbook Nature"
+               menubarPath="uni.hd.cag.tools.docbook.cagGroup/Docbook">
+            <enablement>
+               <objectState
+                     name="nature"
+                     value="uni.hd.cag.tools.docbook.nature">
+               </objectState>
+            </enablement>
+         </action>
+      </objectContribution>
+   </extension>
+   <extension
+         id="xmlProblem"
+         name="XML Problem"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+         id="uni.hd.cag.tools.docbook.console"
+         point="org.eclipse.ui.console.consoleFactories">
+      <consoleFactory
+            class="uni.hd.cag.eclipse.tools.docbook.builder.console.ConsoleFactory"
+            label="CAG Docbook">
+      </consoleFactory>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            adaptable="false"
+            class="uni.hd.cag.eclipse.tools.docbook.builder.properties.DocbookBuilderPropertyPage"
+            id="uni.hd.cag.tools.docbook.xmlProperties"
+            name="Docbook Properties"
+            nameFilter="*.xml"
+            objectClass="org.eclipse.core.resources.IFile"
+            selectionFilter="single">
+         <enabledWhen>
+            <test
+                  forcePluginActivation="true"
+                  property="uni.hd.cag.tools.docbook.properties.docbookArticle"
+                  value="true">
+            </test>
+         </enabledWhen>
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="uni.hd.cag.eclipse.tools.docbook.builder.properties.DocbookFilePropertiesTester"
+            id="uni.hd.cag.tools.docbook.properties.docbookFileTester"
+            namespace="uni.hd.cag.tools.docbook.properties"
+            properties="docbookArticle,docbookBook"
+            type="org.eclipse.core.resources.IFile">
+      </propertyTester>
+   </extension>
+
+</plugin>

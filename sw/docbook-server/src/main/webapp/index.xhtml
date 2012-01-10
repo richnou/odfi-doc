@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:rich="http://richfaces.org/rich">
+
+<ui:composition template="/WEB-INF/pieces/root.xhtml">
+
+	<!-- Sub title definition -->
+	<ui:define name="Subtitle">Docbooks</ui:define>
+
+
+	<!-- Page content -->
+	<ui:define name="Body">
+        
+        <h1>Docbook</h1>
+
+
+		<rich:panel header="Introduction">
+			This is the list of all Docbook that are registered
+			Every Panel can be opened to access the docbook infos and available formats
+		
+		</rich:panel>
+		
+		<rich:panel header="Register a book">
+			Use following form to give the path to a docbook top xml file
+			<rich:messages></rich:messages>
+			<h:form>
+				<h:inputText type="text" value="#{docbookPath}">
+					<f:validator validatorId="docbook.validator.bookFileValidator"> </f:validator>
+				</h:inputText>
+				<h:commandButton value="Submit" action="#{docbookService.addBook(docbookPath)}"></h:commandButton>
+			</h:form>
+		
+		</rich:panel>
+		
+		<rich:dataTable value="#{docbookService.allBooks}" var="book" rows="#{docbookService.allBooks.size()}">
+
+		    <f:facet name="header">
+		        <h:outputText value="List of Books" />
+		    </f:facet>
+		
+		    <rich:column>
+		        <f:facet name="header">Title</f:facet>
+		        #{book.title}   
+		    </rich:column>
+		    
+		    <rich:column>
+		        <f:facet name="header">Abstract</f:facet>
+		        #{book.infoAbstract}
+		    </rich:column>
+		
+		    <rich:column>
+		        <f:facet name="header">View</f:facet>
+		        
+		        <a href="/docbook/view/html/#{book.file.name.replaceAll('(.*)\\.[a-z]+', '$1')}/" target="_blank">html</a>
+		        
+		    </rich:column>
+			
+			
+			
+		    
+		
+		</rich:dataTable>
+		
+		
+		<ui:repeat value="#{docbookService.allBooks}" var="book">
+		
+			<h:form>
+			<rich:collapsiblePanel header="Book: #{book.title}" method="ajax">
+				
+				<!-- Book Properties -->
+				<h4>Properties</h4>
+				<div>
+					<div>Path: #{book.value}</div>
+					<div>Title: #{book.title}</div>
+				</div>
+				
+				
+				<!-- Book Abstract -->
+				<h4>Abstract</h4>
+				<div>
+					#{book.infoAbstract}
+				</div>
+				
+				
+			</rich:collapsiblePanel>
+			</h:form>
+		</ui:repeat>
+
+
+	</ui:define>
+
+</ui:composition>
+</html>

@@ -1,0 +1,57 @@
+<f:view contentType="text/html"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:tab header="Projects">
+
+		<!-- General Administration -->
+		<rich:panel header="General Administration">
+
+			<t:div>
+				<fieldset  title="">
+				    <legend>Add a Project: </legend>
+					   <h:form id="AddProjectFrom">
+						<rich:messages showDetail="#{true}" showSummary="#{false}" />
+						<t:div>
+							<label for="newProjectName">Name</label>
+							<h:inputText required="#{true}" id="newProjectName" value="#{newProjectName}"></h:inputText>
+						</t:div>
+						<t:div>
+							<label for="newProjectLocation">External location: </label>
+							<h:inputText required="#{false}" id="newProjectLocation" value="#{newProjectLocation}"></h:inputText>
+						</t:div>
+						<h:commandButton action="#{SessionProjectManager.loadProject(newProjectName,newProjectLocation)}" value="Add Project"></h:commandButton>
+                        </h:form>
+
+				</fieldset>
+			</t:div>
+
+
+		</rich:panel>
+
+		<!-- Another Tab panel for the different projects -->
+<!-- 		<h:form> -->
+<!-- 		<rich:tabPanel switchType="server"> -->
+<!-- 			<ui:repeat value="#{octopus.edi.projects}" var="project"> -->
+<!-- 				<rich:tab header="#{project.name}"> -->
+
+<!-- 						    Project To describe: #{project.name} -->
+
+
+<!-- 						</rich:tab> -->
+<!-- 			</ui:repeat> -->
+
+
+<!-- 		</rich:tabPanel> -->
+<!-- 		</h:form> -->
+		
+	</rich:tab>
+
+</f:view>
+

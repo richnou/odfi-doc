@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:rich="http://richfaces.org/rich">
+<f:view contentType="text/html">
+
+	<h:head>
+		<t:stylesheet path="/css/style.css"></t:stylesheet>
+		<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/dojo/1.6.0/dojox/highlight/resources/highlight.css" />
+		<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/dojo/1.6.0/dojox/highlight/resources/pygments/colorful.css" />
+		
+		<!-- load Dojo -->
+    	<script src="http://ajax.googleapis.com/ajax/libs/dojo/1.6.0/dojo/dojo.xd.js"></script>
+    	<script type="text/javascript">
+	        dojo.require("dojox.highlight");
+			dojo.require("dojox.highlight.languages.javascript");
+    	</script>
+    	
+		<title>Docbook Server :: <ui:insert name="Subtitle" /></title>
+	</h:head>
+	<h:body>
+
+		<t:panelLayout  bodyClass="Body" navigationClass="Navigation">
+		
+			<f:facet name="header">
+				<!-- Title + subtitle -->
+				<h1>EDIDaemon!</h1>
+				<h2>
+					<ui:insert name="Subtitle"></ui:insert>
+				</h2>
+                <div>
+                    <rich:messages></rich:messages>
+                </div>
+			</f:facet>
+
+
+			<f:facet name="navigation">
+				<!-- Menu -->
+				<t:div id="MainMenu">
+					<h:form>
+						<rich:panelMenu mode="ajax"
+							render="Body"
+							topGroupExpandedRightIcon="chevronUp"
+							topGroupCollapsedRightIcon="chevronDown"
+							groupExpandedLeftIcon="disc" 
+							groupCollapsedLeftIcon="disc">
+
+							<rich:panelMenuItem label="Docbooks" action="menu:books" />
+							
+							<rich:panelMenuItem label="Stylesheets" action="menu:stylesheets" />
+							
+							<rich:panelMenuGroup label="Templates">
+								<rich:panelMenuItem label="CAG Book" action="menu:templates:cag-specification" />
+							</rich:panelMenuGroup>
+							
+						</rich:panelMenu>
+					</h:form>
+				</t:div>
+
+			</f:facet>
+
+			<f:facet name="body">
+				<t:div id="Body">
+					<div id="BodyPanel">
+						<ui:insert name="Body"></ui:insert>
+					</div>
+				</t:div>
+
+			</f:facet>
+
+
+			<f:facet name="footer">
+
+
+			</f:facet>
+
+		</t:panelLayout>
+	</h:body>
+</f:view>
+</html>
