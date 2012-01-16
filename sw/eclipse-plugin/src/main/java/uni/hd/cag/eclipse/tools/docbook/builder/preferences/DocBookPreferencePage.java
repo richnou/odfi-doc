@@ -12,7 +12,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import uni.hd.cag.eclipse.tools.docbook.DocbookPlugin;
-import uni.hd.cag.eclipse.tools.docbook.stylesheets.StylesheetsListTree;
 import uni.hd.cag.eclipse.tools.docbook.stylesheets.StylesheetsLoader;
 import uni.hd.cag.eclipse.tools.swt.StringListEditor;
 import uni.hd.cag.eclipse.tools.swt.TeaCompositeVBox;

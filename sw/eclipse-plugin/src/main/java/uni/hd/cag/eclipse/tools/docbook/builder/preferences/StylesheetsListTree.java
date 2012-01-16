@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uni.hd.cag.eclipse.tools.docbook.stylesheets;
+package uni.hd.cag.eclipse.tools.docbook.builder.preferences;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -9,6 +9,8 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 
+import uni.hd.cag.eclipse.tools.docbook.stylesheets.StylesheetRepository;
+import uni.hd.cag.eclipse.tools.docbook.stylesheets.StylesheetsLoader;
 import uni.hd.cag.eclipse.tools.docbook.stylesheets.ooxoo.elements.Stylesheet;
 
 /**

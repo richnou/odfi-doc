@@ -1,0 +1,92 @@
+#!/usr/bin/env groovy
+
+
+// Classpath
+//-------------------
+
+@GrabResolver(name='idyria', root='http://www.idyria.com/access/osi/artifactory/libs-release-local', m2compatible="true")
+@GrabResolver(name='local', root='file:///home/rleys/.m2/repository/', m2compatible="true")
+@Grab(group='org.odfi.collaboration.docbook', module='docbook-core', version='0.0.1-SNAPSHOT', changing=true)
+import org.odfi.collaboration.docbook.core.*
+import java.util.logging.*;
+
+scriptDir = new File(getClass().protectionDomain.codeSource.location.path).parent
+scriptFile = getClass().protectionDomain.codeSource.location.path
+println "Docbook Builder is at location: "+scriptFile
+
+// Create Stylesheet loader
+//-----------------------
+Logger.getLogger("uni.hd.cag.ooxoo").setLevel(Level.SEVERE)
+StylesheetsLoader loader = StylesheetsLoader.getInstance()
+loader.loadRepository("file://"+scriptDir+"/../stylesheets/")
+
+
+// CLI
+//------------------------
+
+//-- Define syntax
+def cli = new CliBuilder(usage: 'odfi_collaboration_docbook')
+cli.setStopAtNonOption(true)
+cli.with {
+	h longOpt: 'help', 'Show usage information'
+	l longOpt: 'list', ' List available stylesheets'
+}
+cli.b(longOpt:'book',args:2,valueSeparator:" ",argName:"bookfile.xml stylesheetid","Builds target bookfile.xml with the given stylesheet id (call --list to see which are available)")
+
+//-- Parse
+def options = cli.parse(args)
+if (!options || options.h) {
+	cli.usage()
+	return
+}
+
+// Execute
+//------------------
+
+
+//---- List
+//------------------------
+if (options.l) {
+	
+	println "Listing available stylesheets"
+	for ( stylesheet in loader.getPossibleStylesheetsArray()) {
+		println "    "+stylesheet
+	}
+	
+} 
+//---- Build Book
+//----------------------------
+else if (options.b) {
+	
+	//-- Prepare
+	book 		= options.bs[0]
+	stylesheet 	= options.bs[1]
+	println "Book: "+book
+	println "Stylesheet: "+stylesheet
+	
+	//-- Check Stylesheet
+	stylesheetAndRepository = loader.getStylesheet(stylesheet)
+	if (stylesheetAndRepository == null) {
+		println "Stylesheet id does not exists, use --list to get an availability list"
+		return
+	} else if (stylesheetAndRepository.left == null ) {
+		println "Repository was returned null"
+		return
+	} else if (stylesheetAndRepository.right == null ) {
+		println "Stylesheet was returned null"
+		return
+	}
+	
+	
+	//-- Build
+	bookFile = new File(book)
+	rep = stylesheetAndRepository.left
+	st = stylesheetAndRepository.right
+	println "Book absolute path: "+bookFile.getAbsoluteFile().getAbsolutePath()
+	try {
+		rep.transform(bookFile.getAbsoluteFile(),st)
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+	
+}

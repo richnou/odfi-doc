@@ -1,2 +1,4 @@
 
 /sw/eclipse-plugin/bin
+*.class
+target
