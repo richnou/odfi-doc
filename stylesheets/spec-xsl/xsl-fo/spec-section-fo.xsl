@@ -101,7 +101,31 @@
         Figure Handling. only support image at the moment
      -->
      <xsl:template match="docbook:figure" mode="content">
-        
+        <fo:block margin-top="2em" margin-bottom="2em" text-align="center">
+        	
+        	<fo:block>
+	        <!-- The media Object -->
+			<xsl:if test="./docbook:mediaobject/docbook:imageobject/docbook:imagedata">
+				<xsl:variable name="imageData"
+					select="./docbook:mediaobject/docbook:imageobject/docbook:imagedata"></xsl:variable>
+				
+				<fo:external-graphic  content-width="50em" content-height="auto" scaling="uniform">
+		        	<xsl:attribute name="src"><xsl:value-of select="$imageData/@fileref"/></xsl:attribute>               
+                </fo:external-graphic>
+	
+			</xsl:if>
+	
+			</fo:block>
+			
+			
+			<!-- Propagate Caption if there is one -->
+			<xsl:if test="./docbook:caption">
+				<fo:block xsl:use-attribute-sets="caption">			
+					<xsl:value-of select="./docbook:caption/text()" />
+				</fo:block>
+			</xsl:if>
+		  
+		</fo:block>
      </xsl:template>
      
      
@@ -340,5 +364,8 @@
        </fo:block>
        
     </xsl:template>
+    
+
+    
     
 </xsl:stylesheet>

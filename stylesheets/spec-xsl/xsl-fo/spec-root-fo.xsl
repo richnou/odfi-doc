@@ -126,6 +126,11 @@
     	<xsl:attribute name="vertical-align">middle</xsl:attribute>
     </xsl:attribute-set>
     
+    <!-- #### Captions -->
+    <xsl:attribute-set name="caption">
+    	<xsl:attribute name="font-style">italic</xsl:attribute>
+    	<xsl:attribute name="text-align">center</xsl:attribute>
+    </xsl:attribute-set>
 
     <!-- Apply classes -->
     <xsl:template name="classes">
@@ -541,7 +546,10 @@
 	<!-- #################################################### -->
 	<!-- Include Section content processing -->
 	<xsl:include href="spec-section-fo.xsl"/>
-	
+
+
+	<!-- Include Extra content processing -->
+	<xsl:include href="spec-plan-fo.xsl"/>
 
     <!-- Ignores -->
     <xsl:template match="*" mode="info">
