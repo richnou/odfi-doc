@@ -38,11 +38,13 @@
     
     	<fo:table-row>
     		<fo:table-cell xsl:use-attribute-sets="table-cell-style-common table-cell-style-default" number-columns-spanned="2">
+    			<xsl:attribute name="background-color"><xsl:value-of select="$colors-lightblue"/></xsl:attribute>
     			<fo:block>
     				<xsl:value-of select="./cag:title/text()"></xsl:value-of>
     			</fo:block>
     		</fo:table-cell>
     		<fo:table-cell xsl:use-attribute-sets="table-cell-style-common table-cell-style-default">
+    			<xsl:attribute name="background-color"><xsl:value-of select="$colors-lightblue"/></xsl:attribute>
     			<fo:block>
     				<xsl:value-of select="./cag:duration/text()"></xsl:value-of>
     			</fo:block>
@@ -60,7 +62,7 @@
     	<fo:table-row>
     		<fo:table-cell xsl:use-attribute-sets="table-cell-style-common table-cell-style-default">
     			<fo:block>
-    				<xsl:value-of select="./cag:title/text()"></xsl:value-of>
+    				&#x2022; <xsl:value-of select="./cag:title/text()"></xsl:value-of>
     			</fo:block>
     		</fo:table-cell>
     		<fo:table-cell xsl:use-attribute-sets="table-cell-style-common table-cell-style-default">
