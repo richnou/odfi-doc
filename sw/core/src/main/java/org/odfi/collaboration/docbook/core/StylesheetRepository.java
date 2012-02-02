@@ -32,6 +32,8 @@ import uni.hd.cag.ooxoo.core.buffers.datatypes.XSDStringBuffer;
 import com.idyria.utils.java.file.TeaFileUtils;
 import com.idyria.utils.java.io.TeaIOUtils;
 import com.idyria.utils.java.logging.TeaLogging;
+import com.idyria.utils.java.os.OSDetector;
+import com.idyria.utils.java.os.OSDetector.OS;
 
 
 /**
@@ -128,7 +130,7 @@ public class StylesheetRepository extends Stylesheets {
 			}
 			
 			//-- Output result depends on output type
-			File outputTarget = TeaFileUtils.buildPathAsFile(outputTargetContainer,sourceNameWithoutExtension+stylesheetTemplates.getOutputProperties().getProperty("method", "xml"));
+			File outputTarget = TeaFileUtils.buildPathAsFile(outputTargetContainer,sourceNameWithoutExtension+"."+stylesheetTemplates.getOutputProperties().getProperty("method", "xml"));
 			
 			// Do output
 			//---------------------
@@ -238,6 +240,19 @@ public class StylesheetRepository extends Stylesheets {
 					//-- Separate command string on spaces to create an array
 					String[] cmdArray = command.split(" ");
 					
+					//-- The first argument if the exe, adapt the name multi OS support
+					//-- Windows: add .bat if not ending with .bat
+					//-- Linux: Don't touch, if file does not exist, otherwise add sh
+					if (OSDetector.getOS()==OS.LINUX) {
+						//-- The rest should be windows
+						File cmdPath= new File(cmdArray[0]);
+						if (!cmdPath.exists())
+							cmdArray[0] = cmdArray[0]+".sh";
+					} else {
+						//-- The rest should be windows
+						cmdArray[0] = cmdArray[0].endsWith(".bat") ? cmdArray[0] : cmdArray[0]+".bat";
+					}
+					
 					for (String str : cmdArray) {
 						TeaLogging.teaLogInfo("-- Post Processing command arg: "+str);
 						//ConsoleFactory.logInfo("-- Post Processing command arg: "+str);
@@ -262,25 +277,28 @@ public class StylesheetRepository extends Stylesheets {
 			}
 			
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
+			TeaLogging.teaLogSevere(e);
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+			TeaLogging.teaLogSevere(e);
 			e.printStackTrace();
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
+			TeaLogging.teaLogSevere(e);
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			TeaLogging.teaLogSevere(e);
 			e.printStackTrace();
 		} catch (TransformerConfigurationException e) {
-			// TODO Auto-generated catch block
+			TeaLogging.teaLogSevere(e);
 			e.printStackTrace();
 			//throw new RuntimeException(e);
 		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
+			TeaLogging.teaLogSevere(e);
 			e.printStackTrace();
 			//throw new RuntimeException(e);
+		} catch (Exception e) {
+			TeaLogging.teaLogSevere(e);
+			e.printStackTrace();
 		}
 	}
 	
