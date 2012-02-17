@@ -46,6 +46,7 @@ public class DocbookBuilder extends IncrementalProjectBuilder {
 		
 		//-- Configure logging to have the Stylesheet Repository log to console
 		Logger.getLogger(StylesheetRepository.class.getCanonicalName()).addHandler(ConsoleFactory.getLoggingHandler());
+		Logger.getLogger(DocbookBuilder.class.getCanonicalName()).addHandler(ConsoleFactory.getLoggingHandler());
 	}
 	
 	private class DeltaVisitor implements IResourceDeltaVisitor {
@@ -91,6 +92,7 @@ public class DocbookBuilder extends IncrementalProjectBuilder {
 						
 					} catch (Exception e1) {
 						e1.printStackTrace();
+						TeaLogging.teaLogSevere(e1);
 					}
 					
 					//-- Get Stylesheets

@@ -72,6 +72,7 @@ public class ConsoleFactory implements IConsoleFactory {
 			PrintStream ps = new PrintStream(os);
 			e.printStackTrace(ps);
 			ps.flush();
+			console.newMessageStream().print("[Error] Exception logged");
 			console.newMessageStream().print(new String(os.toByteArray()));
 
 		}

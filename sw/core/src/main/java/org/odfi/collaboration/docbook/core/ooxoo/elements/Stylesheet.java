@@ -1,10 +1,11 @@
 package org.odfi.collaboration.docbook.core.ooxoo.elements;
 
 
-import uni.hd.cag.ooxoo.core.ElementBuffer;
-import uni.hd.cag.ooxoo.core.wrap.annotations.Ooxattribute;
-import uni.hd.cag.ooxoo.core.wrap.annotations.Ooxelement;
 import uni.hd.cag.ooxoo.core.wrap.annotations.Ooxnode;
+import uni.hd.cag.ooxoo.core.wrap.annotations.Ooxelement;
+import uni.hd.cag.ooxoo.core.ElementBuffer;
+import uni.hd.cag.ooxoo.core.buffers.datatypes.XSDStringBuffer;
+import uni.hd.cag.ooxoo.core.wrap.annotations.Ooxattribute;
 
 
 @Ooxnode(localName="Stylesheet",targetNamespace="http://www.idyria.com/osi/docbook/stylesheets")
@@ -30,13 +31,13 @@ public class Stylesheet extends ElementBuffer{
 	@Ooxelement()
 	private org.odfi.collaboration.docbook.core.ooxoo.ctypes.PostProcessingType PostProcessing = null;
 
-	@Ooxnode(localName="name",targetNamespace="http://www.idyria.com/osi/docbook/stylesheets")
-	@Ooxattribute()
-	private uni.hd.cag.ooxoo.core.buffers.datatypes.XSDStringBuffer name = null;
+	@Ooxnode(localName="TransformChain",targetNamespace="http://www.idyria.com/osi/docbook/stylesheets")
+	@Ooxelement()
+	private org.odfi.collaboration.docbook.core.ooxoo.ctypes.TransformChainType TransformChain = null;
 
-	@Ooxnode(localName="path",targetNamespace="http://www.idyria.com/osi/docbook/stylesheets")
+	@Ooxnode(localName="name",targetNamespace="http://www.idyria.com/osi/docbook/stylesheets")
 	@Ooxattribute(use="required")
-	private uni.hd.cag.ooxoo.core.buffers.datatypes.XSDStringBuffer path = null;
+	private uni.hd.cag.ooxoo.core.buffers.datatypes.XSDStringBuffer name = null;
 
 	/**
 	 *
@@ -121,6 +122,33 @@ public class Stylesheet extends ElementBuffer{
 
 	/**
 	 *
+	 * @return value for the field : TransformChain
+	 */
+	public org.odfi.collaboration.docbook.core.ooxoo.ctypes.TransformChainType getTransformChain(Boolean create) {
+
+		if (this.TransformChain == null && create)
+			TransformChain= new org.odfi.collaboration.docbook.core.ooxoo.ctypes.TransformChainType();
+		return TransformChain;
+	}
+
+	/**
+	 *
+	 * @return value for the field : TransformChain
+	 */
+	public org.odfi.collaboration.docbook.core.ooxoo.ctypes.TransformChainType getTransformChain() {
+		return getTransformChain(false);
+	}
+
+	/**
+	 *
+	 * @param value for the field : TransformChain
+	 */
+	public void setTransformChain(org.odfi.collaboration.docbook.core.ooxoo.ctypes.TransformChainType TransformChain) {
+		this.TransformChain=TransformChain;
+	}
+
+	/**
+	 *
 	 * @return value for the field : name
 	 */
 	public uni.hd.cag.ooxoo.core.buffers.datatypes.XSDStringBuffer getName(Boolean create) {
@@ -145,34 +173,6 @@ public class Stylesheet extends ElementBuffer{
 	 */
 	public void setName(uni.hd.cag.ooxoo.core.buffers.datatypes.XSDStringBuffer name) {
 		this.name=name;
-	}
-
-	/**
-	 *
-	 * @return value for the field : path
-	 */
-	public uni.hd.cag.ooxoo.core.buffers.datatypes.XSDStringBuffer getPath(Boolean create) {
-
-		if (this.path == null && create) {
-			path= new uni.hd.cag.ooxoo.core.buffers.datatypes.XSDStringBuffer();
-		}
-		return path;
-	}
-
-	/**
-	 *
-	 * @return value for the field : path
-	 */
-	public uni.hd.cag.ooxoo.core.buffers.datatypes.XSDStringBuffer getPath() {
-		return getPath(false);
-	}
-
-	/**
-	 *
-	 * @param value for the field : path
-	 */
-	public void setPath(uni.hd.cag.ooxoo.core.buffers.datatypes.XSDStringBuffer path) {
-		this.path=path;
 	}
 
 }

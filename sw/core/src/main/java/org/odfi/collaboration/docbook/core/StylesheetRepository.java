@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.LinkedList;
 
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerConfigurationException;
@@ -71,47 +72,55 @@ public class StylesheetRepository extends Stylesheets {
 		
 		
 		try {
-			// Prepare sources && Result
-			//---------------------------
-			InputStream stylesheetStream = null;
-			InputStream sourceStream = sourceFile.toURI().toURL().openStream();
-			String sourceNameWithoutExtension = sourceFile.getName().replaceAll("\\.[a-z]+","");
-			//TeaLogging.teaLogInfo("Source Name without extension: "+sourceNameWithoutExtension)
 			
-			//-- Stylesheet
-			URI stylesheetPath = new URI(stylesheet.getPath().getValue());
-			if (!stylesheetPath.isAbsolute()) {
-				stylesheetPath = new URI(this.getRepositoryURL().toString()+"/../"+stylesheet.getPath().getValue());
-				stylesheetPath = stylesheetPath.normalize();
-			}
-			
-			// File or URL?
-			String systemId = stylesheetPath.toURL().toExternalForm();
-			if (stylesheetPath.getScheme()==null || stylesheetPath.getScheme().equals("file")) {
-				stylesheetStream = new FileInputStream(stylesheetPath.getPath());
-				systemId = new File(stylesheetPath.getPath()).toURI().toURL().toExternalForm();
-			} else 
-				stylesheetStream = stylesheetPath.toURL().openStream();
-		
-			
-			
-			//ConsoleFactory.logInfo("Resolved stylesheet path: "+stylesheetPath+" scheme : "+stylesheetPath.getScheme()+"// systemid: "+systemId);
-			
-			
-			//-- Create Template
-			
+			// Prepare SAXB
+			//----------------------
+
 			// Factory
 			Configuration saxonConfiguration = Configuration.newConfiguration();
 			saxonConfiguration.setXIncludeAware(true);
 	
 			TransformerFactory factory = TransformerFactory.newInstance("net.sf.saxon.TransformerFactoryImpl", Thread.currentThread().getContextClassLoader());			
 			((net.sf.saxon.TransformerFactoryImpl)factory).setConfiguration(saxonConfiguration);
-
-			// Create
-			StreamSource stylesheetSource = new StreamSource(stylesheetStream);
-			stylesheetSource.setSystemId(systemId);
-			Templates stylesheetTemplates = factory.newTemplates(stylesheetSource);
 			
+			// Prepare sources && Result
+			//---------------------------
+			LinkedList<Templates> stylesheetsTemplates = new LinkedList<Templates>();
+			URI lastStylsheetPath = null; // Save path of the last stylesheet in the chain
+			InputStream sourceStream = sourceFile.toURI().toURL().openStream();
+			String sourceNameWithoutExtension = sourceFile.getName().replaceAll("\\.[a-z]+\\z","");
+			//TeaLogging.teaLogInfo("Source Name without extension: "+sourceNameWithoutExtension)
+			
+			//-- Prepare Stylesheets Templates
+			for (XSDStringBuffer stylesheetStringPath : stylesheet.getTransformChain().getStylesheet()) {
+				
+				lastStylsheetPath = new URI(stylesheetStringPath.getValue());
+				if (!lastStylsheetPath.isAbsolute()) {
+					lastStylsheetPath = new URI(this.getRepositoryURL().toString()+"/../"+stylesheetStringPath.getValue());
+					lastStylsheetPath = lastStylsheetPath.normalize();
+				}
+				
+				// File or URL?
+				InputStream stylesheetStream = null;
+				String systemId = lastStylsheetPath.toURL().toExternalForm();
+				if (lastStylsheetPath.getScheme()==null || lastStylsheetPath.getScheme().equals("file")) {
+					stylesheetStream = new FileInputStream(lastStylsheetPath.getPath());
+					systemId = new File(lastStylsheetPath.getPath()).toURI().toURL().toExternalForm();
+				} else 
+					stylesheetStream = lastStylsheetPath.toURL().openStream();
+		
+				// Prepare Templates
+				StreamSource stylesheetSource = new StreamSource(stylesheetStream);
+				stylesheetSource.setSystemId(systemId);
+				Templates stylesheetTemplates = factory.newTemplates(stylesheetSource);
+				
+				// Add to chain list
+				stylesheetsTemplates.add(stylesheetTemplates);
+
+				
+			}
+			
+
 			// Prepare output
 			//------------------
 			
@@ -129,37 +138,65 @@ public class StylesheetRepository extends Stylesheets {
 				}
 			}
 			
-			//-- Output result depends on output type
-			File outputTarget = TeaFileUtils.buildPathAsFile(outputTargetContainer,sourceNameWithoutExtension+"."+stylesheetTemplates.getOutputProperties().getProperty("method", "xml"));
+			//-- Output result depends on output type of the last one
+			Templates lastTemplate = stylesheetsTemplates.getLast();
+			File outputTarget = TeaFileUtils.buildPathAsFile(outputTargetContainer,sourceNameWithoutExtension+"."+lastTemplate.getOutputProperties().getProperty("method", "xml"));
 			
 			// Do output
 			//---------------------
 		
+			
+			
 			//-- Prepare XML source
 			StreamSource sourceXMLSource = new StreamSource(sourceStream);
 			sourceXMLSource.setSystemId(sourceFile.toURI().toURL().toExternalForm());
 			
 			//-- Transform
-			ByteArrayOutputStream resultingBytes = new ByteArrayOutputStream();
-			StreamResult result = new StreamResult(resultingBytes);
-			stylesheetTemplates.newTransformer().transform(sourceXMLSource, result);
-		
-			//-- Copy to output
+			
+			// Previous Source starts with xml base source
+			StreamSource previousSource = sourceXMLSource;
+			ByteArrayOutputStream lastResult = null;
+			
+			// Loop over chain
+			int dbgcount = 0;
+			for (Templates template : stylesheetsTemplates) {
+			
+				// Result
+				lastResult = new ByteArrayOutputStream();
+				StreamResult result = new StreamResult(lastResult);
+				
+				
+				
+				// Transform
+				template.newTransformer().transform(previousSource, result);
+				
+				// Turn result into next source
+				previousSource = new StreamSource(new ByteArrayInputStream(lastResult.toByteArray()));
+				
+				// Debug
+				//FileOutputStream outputTargetStream = new FileOutputStream(outputTarget+"_dbg_"+dbgcount+".xml");
+				//outputTargetStream.write(lastResult.toByteArray());
+				
+				dbgcount++;
+			}
+			
+			//-- Copy to output with the last result
 			FileOutputStream outputTargetStream = new FileOutputStream(outputTarget);
-			outputTargetStream.write(resultingBytes.toByteArray());
+			outputTargetStream.write(lastResult.toByteArray());
 			
 		
-			//---- Copy additional resources
+			//---- Copy additional resources (depending on last stylesheet path)
 			//-------------------------
 			if (stylesheet.getOutput()!=null) {
 				for (XSDStringBuffer fileToCopy : stylesheet.getOutput().getFile()) {
 					
+		
 					
 					try {
 						//-- Resource is absolute or relative to 
 						URI resourceURI = new URI(fileToCopy.getValue());
 						if (!resourceURI.isAbsolute()) {
-							resourceURI = new URI(stylesheetPath.toString()+"/../"+resourceURI.getPath());
+							resourceURI = new URI(lastStylsheetPath.toString()+"/../"+resourceURI.getPath());
 							resourceURI=resourceURI.normalize();
 						}
 						
@@ -232,7 +269,7 @@ public class StylesheetRepository extends Stylesheets {
 					//-- Replace variables
 					String command = cmd.getValue();
 					command = command.replace("$repositoryPath$", new File(this.getRepositoryURL().toURL().getFile()).getParentFile().getAbsolutePath());
-					command = command.replace("$stylesheetFolderPath$", new File(stylesheetPath.toURL().getFile()).getParentFile().getAbsolutePath());
+					command = command.replace("$stylesheetFolderPath$", new File(lastStylsheetPath.toURL().getFile()).getParentFile().getAbsolutePath());
 					command = command.replace("$outputFile$",outputTarget.getAbsolutePath());
 					command = command.replace("$outputFileFolder$",outputTarget.getParentFile().getAbsolutePath());
 					command = command.replace("$outputFileName$",outputTarget.getName().replaceAll("\\..*$", ""));
@@ -296,7 +333,7 @@ public class StylesheetRepository extends Stylesheets {
 			TeaLogging.teaLogSevere(e);
 			e.printStackTrace();
 			//throw new RuntimeException(e);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			TeaLogging.teaLogSevere(e);
 			e.printStackTrace();
 		}
