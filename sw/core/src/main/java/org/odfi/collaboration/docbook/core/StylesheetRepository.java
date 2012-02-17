@@ -298,6 +298,7 @@ public class StylesheetRepository extends Stylesheets {
 					ProcessBuilder pb = new ProcessBuilder(cmdArray);
 					pb.directory(outputTargetContainer);
 					pb.redirectErrorStream(true);
+					
 
 					//-- Start and redirect output to 
 					Process p = pb.start();

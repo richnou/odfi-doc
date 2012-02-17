@@ -26,8 +26,7 @@
 			<File>log4j.xml</File>
 		</Output>
 		<PostProcessing>
-			<Command>$repositoryPath$/../external/apache-fop/transformToPDF
-				$outputFile$ $outputFileFolder$ $outputFileName$.pdf</Command>
+			<Command>$repositoryPath$/../external/apache-fop/transformToPDF $outputFile$ $outputFileFolder$ $outputFileName$.pdf</Command>
 		</PostProcessing>
 	</Stylesheet>
 	<Stylesheet name="validation-tcl">
