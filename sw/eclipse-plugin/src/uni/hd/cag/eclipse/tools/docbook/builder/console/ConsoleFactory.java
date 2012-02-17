@@ -38,44 +38,45 @@ public class ConsoleFactory implements IConsoleFactory {
 	public void openConsole() {
 		// TODO Auto-generated method stub
 
+		this.getConsole();
+
+	}
+	
+	/**
+	 * Returns or Create/activate console if not existing
+	 * @return
+	 */
+	private static synchronized MessageConsole getConsole() {
 		if (console == null) {
 			console = new MessageConsole("Docbook Plugin console", null);
 			ConsolePlugin.getDefault().getConsoleManager()
 					.addConsoles(new IConsole[] { console });
+			console.activate();
 		}
-
+		
+		return console;
 	}
 
 	public static synchronized void logInfo(String message) {
-		if (console != null) {
 
-			console.activate();
-			console.newMessageStream().println(message);
+			ConsoleFactory.getConsole().newMessageStream().println(message);
 
-		}
 	}
 
 	public static synchronized void logError(String message) {
-		if (console != null) {
+		ConsoleFactory.getConsole().newMessageStream().println("[Error] " + message);
 
-			console.activate();
-			console.newMessageStream().println("[Error] " + message);
-
-		}
 	}
 
 	public static synchronized void logThrowable(Throwable e) {
-		if (console != null) {
-
-			console.activate();
+	
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 			PrintStream ps = new PrintStream(os);
 			e.printStackTrace(ps);
 			ps.flush();
-			console.newMessageStream().print("[Error] Exception logged");
-			console.newMessageStream().print(new String(os.toByteArray()));
+			ConsoleFactory.getConsole().newMessageStream().print("[Error] Exception logged");
+			ConsoleFactory.getConsole().newMessageStream().print(new String(os.toByteArray()));
 
-		}
 	}
 
 	public static Handler getLoggingHandler() {

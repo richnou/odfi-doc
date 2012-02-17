@@ -1,8 +1,14 @@
 package uni.hd.cag.eclipse.tools.docbook;
 
+import java.util.logging.Logger;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.odfi.collaboration.docbook.core.StylesheetRepository;
+import org.odfi.collaboration.docbook.core.StylesheetsLoader;
 import org.osgi.framework.BundleContext;
+
+import uni.hd.cag.eclipse.tools.docbook.builder.console.ConsoleFactory;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -30,6 +36,9 @@ public class DocbookPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		
+		//-- Configure logging to have the Stylesheet Repository log to console
+		Logger.getLogger(StylesheetRepository.class.getCanonicalName()).addHandler(ConsoleFactory.getLoggingHandler());
 		
 	}
 
