@@ -9,7 +9,7 @@
 			<Stylesheet>./spec-xsl/html/spec-root.xsl</Stylesheet>
 		</TransformChain>
 		<Output>
-			<Path>html</Path>
+			<Path>html/index.html</Path>
 			<File>css/spec-default.css</File>
 			<File>js/</File>
 		</Output>
@@ -23,7 +23,7 @@
 			<Stylesheet>./spec-xsl/xsl-fo/spec-root-fo.xsl</Stylesheet>
 		</TransformChain>
 		<Output>
-			<Path>pdf</Path>
+			<Path>pdf/</Path>
 			<File>fop.xconf</File>
 			<File>log4j.xml</File>
 		</Output>
@@ -47,7 +47,7 @@
             <Stylesheet>./spec-xsl/xsl-fo/spec-root-fo.xsl</Stylesheet>
         </TransformChain>
         <Output>
-            <Path>validation-to-article</Path>
+            <Path>validation-to-article/</Path>
         </Output>
         <PostProcessing>
             <Command>$repositoryPath$/../external/apache-fop/transformToPDF $outputFile$ $outputFileFolder$ $outputFileName$.pdf</Command>

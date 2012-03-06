@@ -19,7 +19,8 @@
 	
 	
 	<!-- Root -> Generate an article -->
-	<xsl:template match="/odfi:validation">
+	<!-- ########################### -->
+	<xsl:template match="/odfi:validation-process">
 		
         <article>
             
@@ -28,6 +29,19 @@
             </info>
         
             <toc></toc>
+            
+            
+            <!-- General informations -->
+            <xsl:if test="./odfi:description">
+                <section>
+                    <title>General Informations</title>
+                    
+                    <para></para>
+                    
+                    <xsl:copy-of select="./odfi:description/*"></xsl:copy-of>
+                    
+                </section>
+            </xsl:if>
             
             
             

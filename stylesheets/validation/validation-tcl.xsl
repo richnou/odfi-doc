@@ -33,6 +33,7 @@
 #############################
 
 ## TCL Must be 8.5
+puts "Detected TCL version: [info tclversion]"
 if {[info tclversion] != 8.5} {
     error "TCL version 8.5 is required"
 }
@@ -40,9 +41,10 @@ if {[info tclversion] != 8.5} {
 ## Source and call precondition proc to ensure the ressources needed by the test are available
 ## The procedure might call error to fail
 puts "Verifying test suite preconditions..."
-source test_verify_preconditions.tcl
-test_verify_preconditions
-
+puts "-------------"
+source verify_preconditions.tcl
+verify_preconditions
+puts "-------------"
 
 ## Display the test structure
 #######################################
@@ -112,11 +114,12 @@ puts "Running validation: <xsl:number count="odfi:validation" from="/" level="mu
 <!-- Show test Name -->
 <xsl:template match="odfi:test" mode="run">
 puts "Running test <xsl:value-of select="../@name"/>/test_<xsl:value-of select="@name"/>"
+puts "-------------"
 set res [test_<xsl:value-of select="@name"/>]
 
 <!-- Result thing -->
 set tableRes "@ x &lt; &gt;"
-
+puts "-------------"
 </xsl:template>
 
 

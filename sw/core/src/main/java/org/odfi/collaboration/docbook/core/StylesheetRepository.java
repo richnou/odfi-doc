@@ -137,17 +137,25 @@ public class StylesheetRepository extends Stylesheets {
 				//-- replace variables
 				String tempOutput = stylesheet.getOutput().getPath().getValue().replace("$outputFileName$",sourceNameWithoutExtension);
 				
+				//-- If no extension, it should be a directory
+				boolean dir = true;
+				if (tempOutput.matches(".*\\..+\\z"))
+					dir = false;
+				
 				//-- Build a file
-				outputTargetFile = TeaFileUtils.buildPathAsFile(outputBaseContainer,tempOutput);
+				outputTargetFile = TeaFileUtils.buildPathAsFile(outputBaseContainer,tempOutput).getAbsoluteFile();
+				TeaLogging.teaLogInfo("-- Processed <Path>: "+outputTargetFile.getAbsolutePath());
+				TeaLogging.teaLogInfo("-- Directory: "+dir);
+				
 				
 				//-- If it is a non existing directory -> create and set as base container
-				if (outputTargetFile.isDirectory() ) {
+				if (dir) {
 					outputTargetContainer = outputTargetFile;
-					if (!outputTargetFile.exists())
-						outputTargetFile.mkdirs();
+					outputTargetFile.mkdirs();
 				}
 				//-- If it is a file, mkdirs the parent folder
 				else {
+					outputTargetContainer = outputTargetFile.getParentFile();
 					outputTargetFile.getParentFile().mkdirs();
 				}
 			
@@ -159,7 +167,7 @@ public class StylesheetRepository extends Stylesheets {
 			//-- Final Output target is directory+name, or already the outputTargetFile if it is a file
 			File outputTarget = null;
 			if (outputTargetFile.isDirectory())
-				outputTarget = TeaFileUtils.buildPathAsFile(outputTargetContainer,sourceNameWithoutExtension+"."+lastTemplate.getOutputProperties().getProperty("method", "xml"));
+				outputTarget = TeaFileUtils.buildPathAsFile(outputTargetFile,sourceNameWithoutExtension+"."+lastTemplate.getOutputProperties().getProperty("method", "xml"));
 			else
 				outputTarget = outputTargetFile;
 
@@ -300,6 +308,7 @@ public class StylesheetRepository extends Stylesheets {
 					//-- The first argument if the exe, adapt the name multi OS support
 					//-- Windows: add .bat if not ending with .bat
 					//-- Linux: Don't touch, if file does not exist, otherwise add sh
+					//System.out.println("Detected OS: "+OSDetector.getOS().t);
 					if (OSDetector.getOS()==OS.LINUX) {
 						//-- The rest should be windows
 						File cmdPath= new File(cmdArray[0]);
