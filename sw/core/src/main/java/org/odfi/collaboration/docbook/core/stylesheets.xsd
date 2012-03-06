@@ -19,23 +19,28 @@
 				<element name="Description" type="string" minOccurs="0"></element>
 				<element name="Output" type="tns:OutputType"></element>
 				<element name="PostProcessing" type="tns:PostProcessingType"></element>
+				<element name="TransformChain" type="tns:TransformChainType"></element>
 			</sequence>
-			<attribute name="name" type="string">
+			<attribute name="name" type="string" use="required">
 				<annotation>
 					<documentation>
 						The name of the stylesheet. If not provided the file name provided in path will be used
 					</documentation>
 				</annotation>
 			</attribute>
-			<attribute name="path" use="required" type="string">
-				<annotation>
-					<documentation>
-						The path to the stylesheet root
-					</documentation>
-				</annotation>
-			</attribute>
 		</complexType>
 	</element>
+	
+	<complexType name="TransformChainType">
+		<annotation>
+			<documentation>
+				A list of stylesheets to apply one after another
+			</documentation>
+		</annotation>	
+		<sequence>
+			<element name="Stylesheet" type="string" minOccurs="1" maxOccurs="unbounded"></element>
+		</sequence>
+	</complexType>
 	
 	<complexType name="OutputType">
 		<annotation>

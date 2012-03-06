@@ -13,24 +13,31 @@ import uni.hd.cag.ooxoo.core.wrap.annotations.Ooxelement;
 import uni.hd.cag.ooxoo.core.wrap.annotations.Ooxnode;
 
 
-public class PostProcessingType extends ElementBuffer{
+/**
+ *
+ * 
+ * A list of stylesheets to apply one after another
+ * 
+ *
+ */
+public class TransformChainType extends ElementBuffer{
 
 
 	/**
 	 * This is the default empty constructor
 	 */
-	public PostProcessingType(){
+	public TransformChainType(){
 		
 	}
-	@Ooxnode(localName="Command",targetNamespace="http://www.idyria.com/osi/docbook/stylesheets")
+	@Ooxnode(localName="Stylesheet",targetNamespace="http://www.idyria.com/osi/docbook/stylesheets")
 	@Ooxelement()
-	private uni.hd.cag.ooxoo.core.wrap.OOXList<uni.hd.cag.ooxoo.core.buffers.datatypes.XSDStringBuffer> Command = null;
+	private uni.hd.cag.ooxoo.core.wrap.OOXList<uni.hd.cag.ooxoo.core.buffers.datatypes.XSDStringBuffer> Stylesheet = null;
 
 	/**
 	 *
-	 * @return value for the field : Command
+	 * @return value for the field : Stylesheet
 	 */
-	public uni.hd.cag.ooxoo.core.wrap.OOXList<uni.hd.cag.ooxoo.core.buffers.datatypes.XSDStringBuffer> getCommand(Boolean create) {
+	public uni.hd.cag.ooxoo.core.wrap.OOXList<uni.hd.cag.ooxoo.core.buffers.datatypes.XSDStringBuffer> getStylesheet(Boolean create) {
 
 		/**
 		 *
@@ -40,7 +47,7 @@ public class PostProcessingType extends ElementBuffer{
 		class _nestedmultiple extends OOXList<uni.hd.cag.ooxoo.core.buffers.datatypes.XSDStringBuffer> {
 
 			public _nestedmultiple() {
-				super(new NonNegativeIntegerBuffer(0),new MaxOccursBuffer(true));
+				super(new NonNegativeIntegerBuffer(1),new MaxOccursBuffer(true));
 			}
 
 			public uni.hd.cag.ooxoo.core.buffers.datatypes.XSDStringBuffer add() {
@@ -50,25 +57,25 @@ public class PostProcessingType extends ElementBuffer{
 			}
 		}
 
-		if (this.Command==null)
-			Command= new _nestedmultiple();
-		return Command;
+		if (this.Stylesheet==null)
+			Stylesheet= new _nestedmultiple();
+		return Stylesheet;
 	}
 
 	/**
 	 *
-	 * @return value for the field : Command
+	 * @return value for the field : Stylesheet
 	 */
-	public uni.hd.cag.ooxoo.core.wrap.OOXList<uni.hd.cag.ooxoo.core.buffers.datatypes.XSDStringBuffer> getCommand() {
-		return getCommand(false);
+	public uni.hd.cag.ooxoo.core.wrap.OOXList<uni.hd.cag.ooxoo.core.buffers.datatypes.XSDStringBuffer> getStylesheet() {
+		return getStylesheet(false);
 	}
 
 	/**
 	 *
-	 * @param value for the field : Command
+	 * @param value for the field : Stylesheet
 	 */
-	public void setCommand(uni.hd.cag.ooxoo.core.wrap.OOXList<uni.hd.cag.ooxoo.core.buffers.datatypes.XSDStringBuffer> Command) {
-		this.Command=Command;
+	public void setStylesheet(uni.hd.cag.ooxoo.core.wrap.OOXList<uni.hd.cag.ooxoo.core.buffers.datatypes.XSDStringBuffer> Stylesheet) {
+		this.Stylesheet=Stylesheet;
 	}
 
 }

@@ -208,7 +208,7 @@
      	<xsl:for-each select="$base/docbook:tr">
      		<fo:table-row>
      			<!-- Cells -->
-     			<xsl:for-each select="./docbook:td">
+     			<xsl:for-each select="(./docbook:td|./docbook:th)">
      				
      				<xsl:choose>
      					<xsl:when test="local-name($base)='thead'">
@@ -235,7 +235,7 @@
      </xsl:template>
      
     <!-- table cell  -->
-    <xsl:template name="table-cell-content" match="docbook:td" mode="content">
+    <xsl:template name="table-cell-content" match="docbook:td|docbook:th" mode="content">
     	
     	<!-- Col span -->
 		<xsl:if test="@colspan">

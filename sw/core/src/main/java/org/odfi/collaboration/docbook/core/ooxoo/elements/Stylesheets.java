@@ -1,13 +1,16 @@
 package org.odfi.collaboration.docbook.core.ooxoo.elements;
 
 
+import uni.hd.cag.ooxoo.core.wrap.annotations.Ooxnode;
+import uni.hd.cag.ooxoo.core.wrap.annotations.Ooxelement;
 import uni.hd.cag.ooxoo.core.ElementBuffer;
+import uni.hd.cag.ooxoo.core.buffers.datatypes.XSDStringBuffer;
+import uni.hd.cag.ooxoo.core.wrap.annotations.Ooxattribute;
+import uni.hd.cag.ooxoo.core.wrap.OOXList;
+import uni.hd.cag.ooxoo.core.buffers.datatypes.NCNameBuffer;
+import uni.hd.cag.ooxoo.core.buffers.datatypes.AnyURIBuffer;
 import uni.hd.cag.ooxoo.core.buffers.datatypes.MaxOccursBuffer;
 import uni.hd.cag.ooxoo.core.buffers.datatypes.NonNegativeIntegerBuffer;
-import uni.hd.cag.ooxoo.core.wrap.OOXList;
-import uni.hd.cag.ooxoo.core.wrap.annotations.Ooxattribute;
-import uni.hd.cag.ooxoo.core.wrap.annotations.Ooxelement;
-import uni.hd.cag.ooxoo.core.wrap.annotations.Ooxnode;
 
 
 @Ooxnode(localName="Stylesheets",targetNamespace="http://www.idyria.com/osi/docbook/stylesheets")
