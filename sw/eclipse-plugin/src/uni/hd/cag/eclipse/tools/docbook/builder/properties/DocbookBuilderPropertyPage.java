@@ -118,46 +118,6 @@ public class DocbookBuilderPropertyPage extends PropertyPage {
 
 		}
 
-		// this.stylesheetsTable.layout();
-
-		/*
-		 * 
-		 * 
-		 * 
-		 * 
-		 * // Choice //----------------------- stylesheetChoice = new Text(page,
-		 * SWT.NONE); stylesheetChoice.setLayoutData(new GridData(SWT.LEFT,
-		 * SWT.CENTER, true, false, 1, 1));
-		 * stylesheetChoice.setMessage("Stylesheet repository id + stylesheet name"
-		 * );
-		 * stylesheetChoice.setText(choosenStylesheet==null?"":choosenStylesheet
-		 * );
-		 * 
-		 * ContentProposalAdapter proposal = new
-		 * ContentProposalAdapter(stylesheetChoice,new
-		 * TextContentAdapter(),StylesheetsLoader
-		 * .getInstance().getPossibleStylesheetsProvider(),null,null);
-		 * 
-		 * stylesheetSelectionCombo = new Combo(page, SWT.NONE);
-		 * stylesheetSelectionCombo.setLayoutData(new GridData(SWT.FILL,
-		 * SWT.CENTER, true, false, 1, 1));
-		 * stylesheetSelectionCombo.setItems(StylesheetsLoader
-		 * .getInstance().getPossibleStylesheetsArray());
-		 * stylesheetSelectionCombo.add("", 0);
-		 * 
-		 * // Preselect in combo box if already chosen int count = 0; for(String
-		 * str : StylesheetsLoader.getInstance().getPossibleStylesheetsArray())
-		 * { if (str.equals(choosenStylesheet)) {
-		 * stylesheetSelectionCombo.select(count+1); } count++; }
-		 * 
-		 * // Stylesheet list //------------------------- StylesheetsListTree
-		 * stylesheetsTree = new StylesheetsListTree(page); GridData
-		 * gd_stylesheetsTree = new GridData(SWT.LEFT, SWT.TOP, true, true, 1,
-		 * 1); gd_stylesheetsTree.heightHint = 255;
-		 * stylesheetsTree.setLayoutData(gd_stylesheetsTree);
-		 * stylesheetsTree.setSize(stylesheetsTree.computeSize(SWT.DEFAULT,
-		 * SWT.DEFAULT));
-		 */
 		page.layout();
 		return page;
 	}

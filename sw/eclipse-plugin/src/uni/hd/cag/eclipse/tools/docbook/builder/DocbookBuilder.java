@@ -68,7 +68,7 @@ public class DocbookBuilder extends IncrementalProjectBuilder {
 			case IResourceDelta.CHANGED:
 				// handle changed resource
 				
-				ConsoleFactory.logInfo("Changed resource "+resource);
+				//ConsoleFactory.logInfo("Changed resource "+resource);
 				
 				//-- Is it an XML File ?
 				if (resource instanceof IFile && resource.getName().endsWith(".xml")) {
@@ -84,7 +84,7 @@ public class DocbookBuilder extends IncrementalProjectBuilder {
 					}
 					
 					//-- Check XML and validate
-					DocBookInfoXMLHandler reporter = new DocBookInfoXMLHandler(changedFile);
+					/*DocBookInfoXMLHandler reporter = new DocBookInfoXMLHandler(changedFile);
 					try {
 						SAXParser parser = DocbookBuilder.this.getParser();
 						parser.parse(changedFile.getContents(), reporter);
@@ -92,7 +92,7 @@ public class DocbookBuilder extends IncrementalProjectBuilder {
 					} catch (Exception e1) {
 						e1.printStackTrace();
 						TeaLogging.teaLogSevere(e1);
-					}
+					}*/
 					
 					//-- Get Stylesheets
 					String stylesheetProperty = changedFile.getPersistentProperty(new QualifiedName(DocbookPlugin.PLUGIN_ID, "stylesheet"));
@@ -102,40 +102,34 @@ public class DocbookBuilder extends IncrementalProjectBuilder {
 					} 
 					String[] stylesheets = stylesheetProperty.split(" ");
 					
-					// Is it a docbook article
-					//-------------------------------------
-					if (reporter.isDocbookArticle()) {
+					// Process XML Files
+					//--------------------------
+					//-- Loop over stylesheets
+					for (String stylesheet : stylesheets) {
+					
+						//-- Show a building message
+						//ConsolePlugin.getDefault().getConsoleManager().getConsoles()
 						
-						//-- Loop over stylesheets
-						for (String stylesheet : stylesheets) {
+						ConsoleFactory.logInfo("We have an XML document and stylesheet: "+stylesheet);
 						
-							//-- Show a building message
-							//ConsolePlugin.getDefault().getConsoleManager().getConsoles()
+						// Find Back stylesheet
+						//-----------------------------
+						Pair<StylesheetRepository,Stylesheet> styleSheetPair = StylesheetsLoader.getInstance().getStylesheet(stylesheet);
+						
+						
+						// Apply Transformation
+						//------------------------------
+						if (styleSheetPair==null) {
+							ConsoleFactory.logInfo("Stylesheet or Repository not found");
+						} else {
 							
-							ConsoleFactory.logInfo("We have a docbook article and stylesheet: "+stylesheet);
-							
-							// Find Back stylesheet
-							//-----------------------------
-							Pair<StylesheetRepository,Stylesheet> styleSheetPair = StylesheetsLoader.getInstance().getStylesheet(stylesheet);
-							
-							
-							// Apply Transformation
-							//------------------------------
-							if (styleSheetPair==null) {
-								ConsoleFactory.logInfo("Stylesheet or Repository not found");
-							} else {
-								
-								ConsoleFactory.logInfo("Building Article");
-								styleSheetPair.getLeft().transform(changedFile.getLocation().toFile(), styleSheetPair.getRight());
-								changedFile.refreshLocal(0, null);
-							}
+							ConsoleFactory.logInfo("Building XML");
+							styleSheetPair.getLeft().transform(changedFile.getLocation().toFile(), styleSheetPair.getRight());
+							changedFile.refreshLocal(0, null);
 						}
-						
-					} else {
-						
-						//ConsoleFactory.logError("XML Resource is not a docbook article");
-						
 					}
+					
+					
 					
 					
 				}

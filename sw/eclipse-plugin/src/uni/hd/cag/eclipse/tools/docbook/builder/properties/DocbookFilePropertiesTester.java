@@ -48,11 +48,13 @@ public class DocbookFilePropertiesTester extends PropertyTester {
 			return false;
 		}
 		
-		
+		// We can set Transformation if we have an XML file
+		//-----------------------------------
 		if (property.equals("docbookArticle")) {
 			
+			return true;
 			
-			
+			/*
 			// Is this file a docbook article ?
 			//-------------------------------------
 			
@@ -80,7 +82,7 @@ public class DocbookFilePropertiesTester extends PropertyTester {
 			
 			//-- Return property result
 			return xmlHandler.isDocbookArticle();
-			
+			*/
 			
 		}
 		

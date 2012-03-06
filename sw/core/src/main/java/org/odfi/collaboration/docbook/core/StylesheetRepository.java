@@ -128,25 +128,45 @@ public class StylesheetRepository extends Stylesheets {
 			File outputBaseContainer = sourceFile.getParentFile();
 
 			
-			//-- Target Output is the outputbase, adjusted to Output element in Stylesheet
+			//---- Target Output is the outputbase, adjusted to Output element in Stylesheet
+			//---------------------------
 			File outputTargetContainer = outputBaseContainer;
+			File outputTargetFile = null;
 			if (stylesheet.getOutput()!=null && stylesheet.getOutput().getPath()!=null) {
-				File outputTargetFolder = TeaFileUtils.buildPathAsFile(outputBaseContainer,stylesheet.getOutput().getPath().getValue());
-				outputTargetContainer = outputTargetFolder;
-				if (!outputTargetFolder.exists()) {
-					outputTargetFolder.mkdirs();
+				
+				//-- replace variables
+				String tempOutput = stylesheet.getOutput().getPath().getValue().replace("$outputFileName$",sourceNameWithoutExtension);
+				
+				//-- Build a file
+				outputTargetFile = TeaFileUtils.buildPathAsFile(outputBaseContainer,tempOutput);
+				
+				//-- If it is a non existing directory -> create and set as base container
+				if (outputTargetFile.isDirectory() ) {
+					outputTargetContainer = outputTargetFile;
+					if (!outputTargetFile.exists())
+						outputTargetFile.mkdirs();
 				}
+				//-- If it is a file, mkdirs the parent folder
+				else {
+					outputTargetFile.getParentFile().mkdirs();
+				}
+			
 			}
 			
 			//-- Output result depends on output type of the last one
 			Templates lastTemplate = stylesheetsTemplates.getLast();
-			File outputTarget = TeaFileUtils.buildPathAsFile(outputTargetContainer,sourceNameWithoutExtension+"."+lastTemplate.getOutputProperties().getProperty("method", "xml"));
+			
+			//-- Final Output target is directory+name, or already the outputTargetFile if it is a file
+			File outputTarget = null;
+			if (outputTargetFile.isDirectory())
+				outputTarget = TeaFileUtils.buildPathAsFile(outputTargetContainer,sourceNameWithoutExtension+"."+lastTemplate.getOutputProperties().getProperty("method", "xml"));
+			else
+				outputTarget = outputTargetFile;
+
 			
 			// Do output
 			//---------------------
 		
-			
-			
 			//-- Prepare XML source
 			StreamSource sourceXMLSource = new StreamSource(sourceStream);
 			sourceXMLSource.setSystemId(sourceFile.toURI().toURL().toExternalForm());

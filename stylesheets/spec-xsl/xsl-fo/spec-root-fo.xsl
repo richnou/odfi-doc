@@ -110,10 +110,10 @@
     	<xsl:attribute name="margin-bottom"><xsl:value-of select="$table-margin-top-bottom"></xsl:value-of></xsl:attribute>
     </xsl:attribute-set>
     <xsl:attribute-set name="table-border-style">
-    	<xsl:attribute name="border">1px black solid</xsl:attribute>
+    	<xsl:attribute name="border">1px gray solid</xsl:attribute>
     </xsl:attribute-set>
     <xsl:attribute-set name="table-cell-style-common">
-    	<xsl:attribute name="border">1px black solid</xsl:attribute>
+    	<xsl:attribute name="border">1px gray solid</xsl:attribute>
     	<xsl:attribute name="padding">3px</xsl:attribute>
     </xsl:attribute-set>
     <xsl:attribute-set name="table-cell-style-default">

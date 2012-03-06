@@ -17,7 +17,9 @@
 	<Stylesheet name="specification-pdf">
 		<Description>Description</Description>
 		<TransformChain>
+			<Stylesheet>./spec-xsl/common/spec-xml-schema.xsl</Stylesheet>
 			<Stylesheet>./spec-xsl/common/spec-validation.xsl</Stylesheet>
+			<Stylesheet>./spec-xsl/common/spec-pre-end.xsl</Stylesheet>
 			<Stylesheet>./spec-xsl/xsl-fo/spec-root-fo.xsl</Stylesheet>
 		</TransformChain>
 		<Output>
@@ -35,7 +37,20 @@
 			<Stylesheet>./validation/validation-tcl.xsl</Stylesheet>
 		</TransformChain>
 		<Output>
-			<Path>validation-tcl</Path>
+			<Path>validation-tcl/$outputFileName$.tcl</Path>
 		</Output>
 	</Stylesheet>
+	<Stylesheet name="validation-to-article-pdf">
+        <Description>Generate a docbook article from a top validation</Description>
+        <TransformChain>
+            <Stylesheet>./validation/validation-to-article.xsl</Stylesheet>
+            <Stylesheet>./spec-xsl/xsl-fo/spec-root-fo.xsl</Stylesheet>
+        </TransformChain>
+        <Output>
+            <Path>validation-to-article</Path>
+        </Output>
+        <PostProcessing>
+            <Command>$repositoryPath$/../external/apache-fop/transformToPDF $outputFile$ $outputFileFolder$ $outputFileName$.pdf</Command>
+        </PostProcessing>
+    </Stylesheet>
 </Stylesheets>
