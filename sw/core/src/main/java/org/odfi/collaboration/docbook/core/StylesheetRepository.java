@@ -170,7 +170,7 @@ public class StylesheetRepository extends Stylesheets {
 				outputTarget = TeaFileUtils.buildPathAsFile(outputTargetFile,sourceNameWithoutExtension+"."+lastTemplate.getOutputProperties().getProperty("method", "xml"));
 			else
 				outputTarget = outputTargetFile;
-
+			TeaLogging.teaLogInfo("-- Final Output Target: "+outputTarget.getAbsolutePath());
 			
 			// Do output
 			//---------------------

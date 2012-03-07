@@ -23,13 +23,13 @@
 
 
     <!-- Match on validation -->
-    <xsl:template match="/odfi:validation">#!/usr/bin/env tclsh
+    <xsl:template match="/odfi:validation-process">#!/usr/bin/env tclsh
   
 #############################################################
 ## Validation Procedure for: <xsl:value-of select="@name"/>
 #############################################################
 
-## Pre-Require packages and verifications
+## Pre-Require packages
 #############################
 
 ## TCL Must be 8.5
@@ -38,12 +38,37 @@ if {[info tclversion] != 8.5} {
     error "TCL version 8.5 is required"
 }
 
+# We need ITCL
+package require Itcl 3.3
+
+## Source validation tools
+source ../../sw/tcl/validation_xml_utils.tcl
+
+## Preset some variables and tools
+####################################
+
+## Validation ID is the id for the complete process
+set validationId <xsl:value-of select="@id"/>
+
+## Prepare validation report
+ValidationReport validationReport
+
+## Verifications
+#############################
+
+
 ## Source and call precondition proc to ensure the ressources needed by the test are available
 ## The procedure might call error to fail
 puts "Verifying test suite preconditions..."
 puts "-------------"
+
 source verify_preconditions.tcl
-verify_preconditions
+if {[catch {verify_preconditions} err]} {
+    validationReport addError $err
+    puts "Report: [validationReport toString]"
+    exit -1
+}
+
 puts "-------------"
 
 ## Display the test structure
@@ -61,7 +86,7 @@ puts "Running tests"
 
 ## Res
 ####################
-    
+puts "Test Result: "   
 
 
 </xsl:template>
