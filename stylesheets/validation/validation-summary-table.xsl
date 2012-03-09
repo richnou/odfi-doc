@@ -31,7 +31,7 @@
 
 
 	<!-- Template to display Validation as a big summary table -->
-	<xsl:template match="cag:validation" mode="validation-summary-table">
+	<xsl:template match="cag:Validation" mode="validation-summary-table">
 
 		<!-- Spanning row for validation Name -->
 		<tr>
@@ -47,7 +47,7 @@
 
 
 	<!-- A test is converted to a row -->
-	<xsl:template match="cag:test" mode="validation-summary-table">
+	<xsl:template match="cag:Test" mode="validation-summary-table">
 
 		<tr>
 			<td>

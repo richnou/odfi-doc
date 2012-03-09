@@ -60,7 +60,7 @@
           
     </xsl:template>
     
-    <!-- Handle title content -->
+    <!-- #### Handle title content -->
     <xsl:template name="title-content">
     	
     	<!-- ## Prepare Datas -->
@@ -323,7 +323,7 @@
     --> 
     
     
-    <!-- Transfers class/style attributes to set attribute on called element -->
+    <!-- #### Transfers class/style attributes to set attribute on called element -->
     <xsl:template name="style">
         <xsl:if test="@style">
             <xsl:attribute name="style" select="@style"></xsl:attribute>
@@ -346,11 +346,11 @@
         </fo:inline>
     </xsl:template>
     
-    <!-- Handle a paragraph -->
+    <!-- #### Handle a paragraph -->
     <xsl:template match="docbook:section/docbook:para" mode="content">
        
        <!--  xsl:use-attribute-sets="block-common" -->
-       <fo:block xsl:use-attribute-sets="block-common">
+       <fo:block xsl:use-attribute-sets="block-common" linefeed-treatment="preserve" white-space-collapse="false" white-space-treatment="ignore-if-before-linefeed">
        		<xsl:apply-templates  mode="content"></xsl:apply-templates>
        </fo:block>
        
@@ -359,13 +359,27 @@
     <xsl:template match="docbook:para" mode="content">
        
        <!--  xsl:use-attribute-sets="block-common" -->
-       <fo:block xsl:use-attribute-sets="block-common">
+       <fo:block xsl:use-attribute-sets="block-common" linefeed-treatment="preserve" white-space-collapse="false" white-space-treatment="ignore-if-before-linefeed">
        		<xsl:apply-templates  mode="content"></xsl:apply-templates>
        </fo:block>
        
     </xsl:template>
     
-
+    
+    <!-- ###################
+         Code formating 
+          #######################
+    -->
+    
+    <!-- For code, create a box with blue background -->
+    <xsl:template match="docbook:code" mode="content">
+        
+        <fo:block xsl:use-attribute-sets="style-info-box" relative-position="relative">
+            
+            <xsl:apply-templates mode="content"></xsl:apply-templates>
+            
+        </fo:block>
+    </xsl:template>
     
     
 </xsl:stylesheet>

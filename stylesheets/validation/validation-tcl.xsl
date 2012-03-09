@@ -23,7 +23,7 @@
 
 
     <!-- Match on validation -->
-    <xsl:template match="/odfi:validation-process">#!/usr/bin/env tclsh
+    <xsl:template match="/odfi:ValidationProcess">#!/usr/bin/env tclsh
   
 #############################################################
 ## Validation Procedure for: <xsl:value-of select="@name"/>
@@ -38,8 +38,11 @@ if {[info tclversion] != 8.5} {
     error "TCL version 8.5 is required"
 }
 
-# We need ITCL
+## We need ITCL
 package require Itcl 3.3
+
+## We need ODFI TCl utilities
+package require odfi.common 1.0.0
 
 ## Source validation tools
 source ../../sw/tcl/validation_xml_utils.tcl
@@ -47,34 +50,70 @@ source ../../sw/tcl/validation_xml_utils.tcl
 ## Preset some variables and tools
 ####################################
 
-## Validation ID is the id for the complete process
+#### Command Line arguments
+## resume: to resume the test procedure at some point
+## tester (mandatory) : to provide the name of the tester to be reported
+## testerBoardID : to provide the ID of the board beeing tested per hand (for the tester side)
+odfi::common::getOptionsFromArgumentOrIni "test_run.ini" "tester:" "resume?:" "testerBoardID:?"
+
+#### Validation ID is the id for the complete process
 set validationId <xsl:value-of select="@id"/>
 
-## Prepare validation report
-ValidationReport validationReport
+#### Prepare validation report
+ValidationProcessReport validationProcessReport
+validationProcessReport setTester $odfi::common::argv_tester
+validationProcessReport setId $validationId
+
+#### Prepare test resume (resume argument saves which test the process last started, to allow interruption for non fully automatic steps)
+set resumeAt -1
+if {$odfi::common::argv_resume != false } {
+    set resumeAt $odfi::common::argv_resume
+    ::odfi::common::logInfo "Test will be resumed at $resumeAt"
+}
+
+# Resume found variable is used to allow detection of resumeAt value not matching any test
+# and thus not finishing the test successfully
+set resumeFound false
+
+#### Test run variables
+
+# Global indication of failing of a test
+set testRunSuccess true
+
+# Fatal fail of a test
+set testRunFatal false
 
 ## Verifications
 #############################
 
+## Source pre and post run
+source test_pre_run.tcl
+source test_post_run.tcl
 
 ## Source and call precondition proc to ensure the ressources needed by the test are available
 ## The procedure might call error to fail
 puts "Verifying test suite preconditions..."
 puts "-------------"
-
-source verify_preconditions.tcl
-if {[catch {verify_preconditions} err]} {
-    validationReport addError $err
-    puts "Report: [validationReport toString]"
+if {[catch {test_pre_run} err]} {
+    validationProcessReport addError $err
+    puts "Report: [validationProcessReport toString]"
     exit -1
 }
-
 puts "-------------"
 
 ## Display the test structure
 #######################################
 puts "The validation procedure has the following structure"
+set allScriptsFound true
 <xsl:apply-templates mode="test-structure"></xsl:apply-templates>
+
+## Error if all scripts not found
+if {$allScriptsFound==false} {
+    validationProcessReport addError "Some test scripts were not found"
+    puts "Report: [validationProcessReport toString]"
+    exit -1
+}
+
 ## Source The sub validation scripts to have the corresponding methods
 ##############################
 puts "Sourcing the implementation scripts..."
@@ -86,8 +125,11 @@ puts "Running tests"
 
 ## Res
 ####################
-puts "Test Result: "   
+puts "Test Result: [validationProcessReport toIndentedString]"   
 
+## Calling post run
+odfi::common::logInfo "Calling post run procedure...."
+test_post_run
 
 </xsl:template>
 
@@ -96,31 +138,41 @@ puts "Test Result: "
 
 <!-- Display the structure of the validation -->
 <!-- ####################################### -->
-<xsl:template match="odfi:validation" mode="test-structure">
-puts "<xsl:number count="odfi:validation" from="/" level="multiple" ></xsl:number> Validation: <xsl:value-of select="@name"/>"
+<xsl:template match="odfi:Validation" mode="test-structure">
+puts "<xsl:number count="odfi:Validation" from="/" level="multiple" ></xsl:number> Validation: <xsl:value-of select="@name"/>"
 <!-- Show validation tests && sub validations -->
-<xsl:apply-templates mode="test-structure" select="odfi:test|odfi:validation"></xsl:apply-templates>
+<xsl:apply-templates mode="test-structure" select="odfi:Test|odfi:Validation"></xsl:apply-templates>
+puts ""
 </xsl:template>
 
     
 <!-- Show test Name -->
-<xsl:template match="odfi:test" mode="test-structure">
-puts "<xsl:number count="odfi:validation|odfi:test" from="/" level="multiple" ></xsl:number> Test: <xsl:value-of select="@name"/>"
+<xsl:template match="odfi:Test" mode="test-structure">
+puts -nonewline "<xsl:number count="odfi:Validation|odfi:Test" from="/" level="multiple" ></xsl:number> Test: <xsl:value-of select="@name"/>"
+puts -nonewline " ... <xsl:value-of select="../@name"/>/test_<xsl:value-of select="@name"/>.tcl "
+if {[file exists <xsl:value-of select="../@name"/>/test_<xsl:value-of select="@name"/>.tcl]} {
+    puts "found"
+} else {
+    puts "not found...creating"
+    file mkdir <xsl:value-of select="../@name"/>
+    exec touch <xsl:value-of select="../@name"/>/test_<xsl:value-of select="@name"/>.tcl
+    set allScriptsFound true
+}
 </xsl:template>
     
     
 <!-- Source the corresponding scripts -->
 <!-- ################################ -->
 
-<xsl:template match="odfi:validation" mode="source-scripts">
-## <xsl:number count="odfi:validation" from="/" level="multiple" ></xsl:number>  <xsl:value-of select="@name"/>
+<xsl:template match="odfi:Validation" mode="source-scripts">
+## <xsl:number count="odfi:Validation" from="/" level="multiple" ></xsl:number>  <xsl:value-of select="@name"/>
 <!-- Show validation tests && sub validations -->
-<xsl:apply-templates mode="source-scripts" select="odfi:test|odfi:validation"></xsl:apply-templates>
+<xsl:apply-templates mode="source-scripts" select="odfi:Test|odfi:Validation"></xsl:apply-templates>
 </xsl:template>
 
     
 <!-- Show test Name -->
-<xsl:template match="odfi:test" mode="source-scripts">
+<xsl:template match="odfi:Test" mode="source-scripts">
 source <xsl:value-of select="../@name"/>/test_<xsl:value-of select="@name"/>.tcl
 </xsl:template>
 
@@ -128,22 +180,34 @@ source <xsl:value-of select="../@name"/>/test_<xsl:value-of select="@name"/>.tcl
 <!-- Run the tests -->
 <!-- ################################ -->
 
-<xsl:template match="odfi:validation" mode="run">
-## <xsl:number count="odfi:validation" from="/" level="multiple" ></xsl:number>  <xsl:value-of select="@name"/>
-puts "Running validation: <xsl:number count="odfi:validation" from="/" level="multiple" ></xsl:number>  <xsl:value-of select="@name"/>"
+<!-- Validation -->
+<xsl:template match="odfi:Validation" mode="run">
+## <xsl:number count="odfi:Validation" from="/" level="multiple" ></xsl:number>  <xsl:value-of select="@name"/>
+puts "<xsl:number count="odfi:Validation" from="/" level="multiple" ></xsl:number> Validation: <xsl:value-of select="@name"/>"
+set lastValidation [validationProcessReport addValidationReport <xsl:value-of select="@name"/>]
 <!-- Show validation tests && sub validations -->
-<xsl:apply-templates mode="run" select="odfi:test|odfi:validation" ></xsl:apply-templates>
+<xsl:apply-templates mode="run" select="odfi:Test|odfi:Validation" ></xsl:apply-templates>
 </xsl:template>
 
     
-<!-- Show test Name -->
-<xsl:template match="odfi:test" mode="run">
-puts "Running test <xsl:value-of select="../@name"/>/test_<xsl:value-of select="@name"/>"
+<!-- Test -->
+<xsl:template match="odfi:Test" mode="run">
+puts "Test <xsl:value-of select="../@name"/>/test_<xsl:value-of select="@name"/>"
 puts "-------------"
-set res [test_<xsl:value-of select="@name"/>]
-
-<!-- Result thing -->
-set tableRes "@ x &lt; &gt;"
+set testReport [validationProcessReport addTestReport $lastValidation <xsl:value-of select="@name"/>]
+if {$testRunFatal==true} {
+    ## In case of previous fatal error -> Fail strictly
+    validationProcessReport addError "Test not run because of previous fatal error" $testReport
+} elseif {[catch {set testResult [test_<xsl:value-of select="@name"/>]} err]} {
+    validationProcessReport addError $err $testReport
+    set testRunSuccess false
+    <xsl:if test="./@fatal='true'">
+     ## If Fatal test, register error
+    set testRunFatal true
+    </xsl:if>
+} else {
+    validationProcessReport addTestReportResult $testReport $testResult
+}
 puts "-------------"
 </xsl:template>
 

@@ -196,6 +196,7 @@ public class StylesheetRepository extends Stylesheets {
 				
 				
 				// Transform
+				TeaLogging.teaLogInfo("-- Transformation Step "+dbgcount+": ");
 				template.newTransformer().transform(previousSource, result);
 				
 				// Turn result into next source

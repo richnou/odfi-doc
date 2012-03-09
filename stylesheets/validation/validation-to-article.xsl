@@ -20,7 +20,7 @@
 	
 	<!-- Root -> Generate an article -->
 	<!-- ########################### -->
-	<xsl:template match="/odfi:validation-process">
+	<xsl:template match="/odfi:ValidationProcess">
 		
         <article>
             
@@ -32,13 +32,13 @@
             
             
             <!-- General informations -->
-            <xsl:if test="./odfi:description">
+            <xsl:if test="./odfi:Description">
                 <section>
                     <title>General Informations</title>
                     
                     <para></para>
                     
-                    <xsl:copy-of select="./odfi:description/*"></xsl:copy-of>
+                    <xsl:copy-of select="./odfi:Description/*"></xsl:copy-of>
                     
                 </section>
             </xsl:if>
