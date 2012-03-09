@@ -88,18 +88,23 @@
     </xsl:attribute-set>
     <xsl:attribute-set name="section-title-style-level-2" use-attribute-sets="section-title-style-level-common">
     	<xsl:attribute name="font-size">14pt</xsl:attribute>
+    	<xsl:attribute name="font-weight">bold</xsl:attribute>
     </xsl:attribute-set>
     <xsl:attribute-set name="section-title-style-level-3" use-attribute-sets="section-title-style-level-common">
     	<xsl:attribute name="font-size">12pt</xsl:attribute>
+    	<xsl:attribute name="font-weight">bold</xsl:attribute>
     </xsl:attribute-set>
     <xsl:attribute-set name="section-title-style-level-4" use-attribute-sets="section-title-style-level-common">
     	<xsl:attribute name="font-size">10.5pt</xsl:attribute>
+    	<xsl:attribute name="font-weight">bold</xsl:attribute>
     </xsl:attribute-set>
     <xsl:attribute-set name="section-title-style-level-5" use-attribute-sets="section-title-style-level-common">
     	<xsl:attribute name="font-size">10.5pt</xsl:attribute>
+    	<xsl:attribute name="font-weight">bold</xsl:attribute>
     </xsl:attribute-set>
     <xsl:attribute-set name="section-title-style-level-6" use-attribute-sets="section-title-style-level-common">
     	<xsl:attribute name="font-size">10.5pt</xsl:attribute>
+    	<xsl:attribute name="font-weight">bold</xsl:attribute>
     </xsl:attribute-set>
     
     
@@ -131,8 +136,16 @@
     	<xsl:attribute name="font-style">italic</xsl:attribute>
     	<xsl:attribute name="text-align">center</xsl:attribute>
     </xsl:attribute-set>
+    
+    <!-- ###### Styles ####### -->
+    
+    <!-- #### Info box -->
+    <xsl:attribute-set name="style-info-box">
+        <xsl:attribute name="background-color" select="$colors-lightblue"></xsl:attribute>
+        <xsl:attribute name="border">1px gray solid</xsl:attribute>
+    </xsl:attribute-set>
 
-    <!-- Apply classes -->
+    <!-- #### Apply classes -->
     <xsl:template name="classes">
         <xsl:param name="class" required="yes"></xsl:param>
     
@@ -143,7 +156,7 @@
             </xsl:when>
             <xsl:when test="$class = spec-format-bold">
                 <xsl:attribute name="font-weight">bold</xsl:attribute>
-            </xsl:when>
+            </xsl:when>    
         </xsl:choose>
     
         <!-- ##### Table -->

@@ -4,11 +4,15 @@
 // Classpath
 //-------------------
 
+@GrabResolver(name='localm2', root='file:///home/rleys/git/idyria/dev-tools-maven/repository/', m2compatible="true")
 @GrabResolver(name='idyria', root='http://www.idyria.com/access/osi/artifactory/libs-release-local', m2compatible="true")
-@GrabResolver(name='local', root='file:///home/rleys/.m2/repository/', m2compatible="true")
-@Grab(group='org.odfi.collaboration.docbook', module='docbook-core', version='0.0.1-SNAPSHOT', changing=true)
+@Grab(group='org.odfi.collaboration.docbook', module='docbook-core', version='1.1-SNAPSHOT', changing=true)
 import org.odfi.collaboration.docbook.core.*
 import java.util.logging.*;
+
+@Grab(group='com.idyria.osi.java-utils', module='tea', version='1.4-SNAPSHOT',  changing=true)
+import com.idyria.utils.java.os.OSDetector;
+import com.idyria.utils.java.os.OSDetector.OS;
 
 scriptDir = new File(getClass().protectionDomain.codeSource.location.path).parent
 scriptFile = getClass().protectionDomain.codeSource.location.path
@@ -63,6 +67,7 @@ else if (options.b) {
 	stylesheet 	= options.bs[1]
 	println "Book: "+book
 	println "Stylesheet: "+stylesheet
+	println "OS: "+OSDetector.getOS()+" // "+System.getProperty("os.name");
 	
 	//-- Check Stylesheet
 	stylesheetAndRepository = loader.getStylesheet(stylesheet)

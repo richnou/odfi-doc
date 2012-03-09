@@ -6,11 +6,14 @@
 	
 	
 	<!-- Template to display sections as real content -->
-	<xsl:template match="cag:validation" mode="validation-detailed">
+	<xsl:template match="cag:Validation" mode="validation-detailed">
 
 
 		<section>
 			<title><xsl:value-of select="@name"></xsl:value-of></title>
+
+            <!-- Description of validation -->
+            <xsl:call-template name="Description"></xsl:call-template>
 
 			<!-- Global parameters as Table ? -->
 			<xsl:call-template name="parameters">
@@ -25,7 +28,7 @@
 	</xsl:template>
 
 	<!-- Test -->
-	<xsl:template match="cag:test"  mode="validation-detailed">
+	<xsl:template match="cag:Test"  mode="validation-detailed">
 
 		<!-- Name and description -->
 		<section>
@@ -33,9 +36,9 @@
 				<xsl:value-of select="@name" />
 			</title>
 
-			<para>
-				<xsl:value-of select="./cag:description/text()" />
-			</para>
+            <!-- Description -->
+            <xsl:call-template name="Description"></xsl:call-template>
+
 
 			<!-- Parameters -->
 			<xsl:call-template name="parameters">
@@ -43,9 +46,9 @@
 			</xsl:call-template>
 
 			<!-- Steps -->
-			<xsl:if test="./cag:step">
+			<xsl:if test="./cag:Step">
 				<orderedlist>
-					<xsl:apply-templates select="./cag:step" mode="validation-detailed"></xsl:apply-templates>
+					<xsl:apply-templates select="./cag:Step" mode="validation-detailed"></xsl:apply-templates>
 				</orderedlist>
 			</xsl:if>
 
@@ -54,16 +57,16 @@
 	</xsl:template>
 
 	<!-- Steps as List item -->
-	<xsl:template match="cag:step"  mode="validation-detailed">
+	<xsl:template match="cag:Step"  mode="validation-detailed">
 
 		<!-- -->
 		<listitem>
 			<para>
 				<xsl:value-of select="@name"></xsl:value-of>
 			</para>
-			<para>
-				<xsl:value-of select="./cag:description/text()"></xsl:value-of>
-			</para>
+			
+			<!-- Description -->
+            <xsl:call-template name="Description"></xsl:call-template>
 
 			<!-- Parameters -->
 			<para>
@@ -82,7 +85,7 @@
 
 		<xsl:param name="base" required="yes"></xsl:param>
 
-		<xsl:if test="$base/cag:parameter">
+		<xsl:if test="$base/cag:Parameter">
 
 			<table>
 				<thead>
@@ -97,7 +100,7 @@
 				</thead>
 
 				<tbody>
-					<xsl:apply-templates select="$base/cag:parameter"
+					<xsl:apply-templates select="$base/cag:Parameter"
 						mode="parameters"></xsl:apply-templates>
 				</tbody>
 			</table>
@@ -107,20 +110,34 @@
 
 
 	<!-- A parameter is a table row -->
-	<xsl:template match="cag:parameter" mode="parameters">
+	<xsl:template match="cag:Parameter" mode="parameters">
 
 		<tr>
 			<td>
 				<xsl:value-of select="@name" />
 			</td>
 			<td>
-				<xsl:value-of select="./cag:description/text()" />
+				<!-- Description -->
+                <xsl:call-template name="Description"></xsl:call-template>
 			</td>
 			<td>
-				<xsl:value-of select="./cag:value/text()" />
+				<xsl:value-of select="./cag:Value/text()" />
 			</td>
 		</tr>
 
 
 	</xsl:template>
+	
+	<!-- Description -->
+	<!-- ########### -->
+	<xsl:template name="Description">
+	
+	   <xsl:if test="./cag:Description">
+	       <para>
+                <xsl:copy-of select="./cag:Description"></xsl:copy-of>
+            </para>
+	   </xsl:if>
+        
+	</xsl:template>
+	
 </xsl:stylesheet>
