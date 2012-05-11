@@ -203,8 +203,8 @@ public class StylesheetRepository extends Stylesheets {
 				previousSource = new StreamSource(new ByteArrayInputStream(lastResult.toByteArray()));
 				
 				// Debug
-				//FileOutputStream outputTargetStream = new FileOutputStream(outputTarget+"_dbg_"+dbgcount+".xml");
-				//outputTargetStream.write(lastResult.toByteArray());
+				FileOutputStream outputTargetStream = new FileOutputStream(outputTarget+"_dbg_"+dbgcount+".xml");
+				outputTargetStream.write(lastResult.toByteArray());
 				
 				dbgcount++;
 			}

@@ -44,8 +44,7 @@ public class DocbookBuilder extends IncrementalProjectBuilder {
 	public DocbookBuilder() {
 		super();
 		
-		
-		Logger.getLogger(DocbookBuilder.class.getCanonicalName()).addHandler(ConsoleFactory.getLoggingHandler());
+		TeaLogging.getLogger(DocbookBuilder.class.getCanonicalName()).addHandler(ConsoleFactory.getLoggingHandler());
 	}
 	
 	private class DeltaVisitor implements IResourceDeltaVisitor {
