@@ -1,0 +1,115 @@
+<?xml version='1.0' ?><!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<book>
+	<title>collaboration-docbook</title>
+	<chapter id="Documentation_tooling">
+		<title>Documentation tooling</title>
+		<para>This module provides some tools for documentation generation and XML transformation purpose</para>
+		<section id="XML_transform_for_Documentation_.3D">
+			<title>XML transform for Documentation =</title>
+			<section id="Overview">
+				<title>Overview</title>
+				<para>This tool helps transforming an XML document by applying a set of XSL transformations to it.
+					It provides a mean to define some transformation processes which can contain:</para>
+				<itemizedlist>
+					<listitem>
+						<para>Multiple successive XSL chained transformations</para>
+					</listitem>
+					<listitem>
+						<para>Post Processing calls (for example XSL-FO to PDF using apache Batik)</para>
+					</listitem>
+					<listitem>
+						<para>Output file patterns definitions</para>
+					</listitem>
+					<listitem>
+						<para>...</para>
+					</listitem>
+				</itemizedlist>
+			</section>
+			<section id="Transformation_chain_definitions">
+				<title>Transformation chain definitions</title>
+				<para>The transformation processes are described using XML documents, which are located using following means:</para>
+				<itemizedlist>
+					<listitem>
+						<para>Environement variable: Can't remember its name</para>
+					</listitem>
+					<listitem>
+						<para>Programming interface</para>
+					</listitem>
+				</itemizedlist>
+				<para>They can contain successive chained transformations like this:</para>
+				<literallayout>
+&lt;code class="xml"&gt;
+&lt;Stylesheet name="specification-pdf"&gt;
+&lt;Description&gt;Description&lt;/Description&gt;
+	&lt;TransformChain&gt;
+		&lt;Stylesheet&gt;./spec-xsl/common/spec-xml-schema.xsl&lt;/Stylesheet&gt;
+		&lt;Stylesheet&gt;./spec-xsl/common/spec-validation.xsl&lt;/Stylesheet&gt;
+		&lt;Stylesheet&gt;./spec-xsl/common/spec-pre-end.xsl&lt;/Stylesheet&gt;
+		&lt;Stylesheet&gt;./spec-xsl/xsl-fo/spec-root-fo.xsl&lt;/Stylesheet&gt;
+	&lt;/TransformChain&gt;
+	&lt;Output&gt;
+		&lt;Path&gt;pdf/&lt;/Path&gt;
+		&lt;File&gt;fop.xconf&lt;/File&gt;
+		&lt;File&gt;log4j.xml&lt;/File&gt;
+	&lt;/Output&gt;
+	&lt;PostProcessing&gt;
+		&lt;Command&gt;$repositoryPath$/../external/apache-fop/transformToPDF $outputFile$ $outputFileFolder$ $outputFileName$.pdf&lt;/Command&gt;
+	&lt;/PostProcessing&gt;
+&lt;/Stylesheet&gt;
+&lt;/code&gt;
+</literallayout>
+			</section>
+			<section id="Writing_documentation:_Docbook_format">
+				<title>Writing documentation: Docbook format</title>
+				<para>Introduce docbook format for writing documentation</para>
+			</section>
+			<section id="Generator_usage">
+				<title>Generator usage</title>
+				<para>Describe the usage of the odfi_collaboration_docbook command to transform a document</para>
+			</section>
+			<section id="Standard_transformations_chains">
+				<title>Standard transformations chains</title>
+				<para>Some standart Transformation chains are provided by this tool to allow the user to produce nice documentation very fast</para>
+				<section id="Docbook_to_PDF">
+					<title>Docbook to PDF</title>
+				</section>
+				<section id="Docbook_to_HTML_.3D">
+					<title>Docbook to HTML =</title>
+				</section>
+			</section>
+			<section id="Standard_Stylesheets">
+				<title>Standard Stylesheets</title>
+				<para>Describe the single stylesheets used by the standard transformation chains</para>
+			</section>
+		</section>
+		<section id="Wiki_files_to_Documentation">
+			<title>Wiki files to Documentation</title>
+		</section>
+		<section id="Overview_2">
+			<title>Overview</title>
+			<para>This tool helps achieving a rapid path from documentation writing to viewing.
+				It allows writing some documentation in a Wiki file format (like mediawiki)</para>
+		</section>
+		<section id="Wiki_to_HTML_Usage">
+			<title>Wiki to HTML Usage</title>
+			<orderedlist>
+				<listitem>
+					<para>Open a file</para>
+				</listitem>
+				<listitem>
+					<para>Write some Wikimedia syntax in it</para>
+				</listitem>
+				<listitem>
+					<para>Save it with the .mediawiki extension</para>
+				</listitem>
+				<listitem>
+					<para>Call the "odfi_doc_wikigen" command to generate HTML</para>
+				</listitem>
+			</orderedlist>
+		</section>
+		<section id="HTML_Viewer">
+			<title>HTML Viewer</title>
+			<para>Viewer tool for ODFI documentation could be generalised</para>
+		</section>
+	</chapter>
+</book>

@@ -1,0 +1,84 @@
+= Documentation tooling =
+
+This module provides some tools for documentation generation and XML transformation purpose
+
+== XML transform for Documentation === 
+
+=== Overview ===
+
+This tool helps transforming an XML document by applying a set of XSL transformations to it.
+It provides a mean to define some transformation processes which can contain:
+
+* Multiple successive XSL chained transformations
+* Post Processing calls (for example XSL-FO to PDF using apache Batik)
+* Output file patterns definitions
+* ...
+
+=== Transformation chain definitions ===
+
+The transformation processes are described using XML documents, which are located using following means:
+* Environement variable: ODFI_DOCBOOK_STYLESHEETS_REPS
+* Programming interface
+
+They can contain successive chained transformations like this:
+
+<code class="language-xml">
+<Stylesheet name="specification-pdf">
+<Description>Description</Description>
+	<TransformChain>
+		<Stylesheet>./spec-xsl/common/spec-xml-schema.xsl</Stylesheet>
+		<Stylesheet>./spec-xsl/common/spec-validation.xsl</Stylesheet>
+		<Stylesheet>./spec-xsl/common/spec-pre-end.xsl</Stylesheet>
+		<Stylesheet>./spec-xsl/xsl-fo/spec-root-fo.xsl</Stylesheet>
+	</TransformChain>
+	<Output>
+		<Path>pdf/</Path>
+		<File>fop.xconf</File>
+		<File>log4j.xml</File>
+	</Output>
+	<PostProcessing>
+		<Command>$repositoryPath$/../external/apache-fop/transformToPDF $outputFile$ $outputFileFolder$ $outputFileName$.pdf</Command>
+	</PostProcessing>
+</Stylesheet>
+</code>
+
+
+=== Writing documentation: Docbook format ===
+
+Introduce docbook format for writing documentation
+
+=== Generator usage ===
+
+Describe the usage of the odfi_collaboration_docbook command to transform a document
+
+=== Standard transformations chains ===
+
+Some standart Transformation chains are provided by this tool to allow the user to produce nice documentation very fast
+
+====  Docbook to PDF ====
+
+==== Docbook to HTML =====
+
+
+=== Standard Stylesheets ===
+
+Describe the single stylesheets used by the standard transformation chains
+
+
+== Wiki files to Documentation ==
+
+== Overview ==
+
+This tool helps achieving a rapid path from documentation writing to viewing.
+It allows writing some documentation in a Wiki file format (like mediawiki)
+
+== Wiki to HTML Usage ==
+
+# Open a file
+# Write some Wikimedia syntax in it
+# Save it with the .mediawiki extension
+# Call the "odfi_doc_wikigen" command to generate HTML
+
+== HTML Viewer ==
+
+Viewer tool for ODFI documentation could be generalised

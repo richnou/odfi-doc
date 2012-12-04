@@ -1,0 +1,72 @@
+#!/usr/bin/env scala_script
+
+__SCALA_CLASSPATH__
+
+
+// Setup classpath
+//--------------------
+
+import java.io.File
+import java.net.URLClassLoader
+import java.net.URL
+
+//-- Script location
+var scriptLocation = sys.props("script.location")
+var wikitextLocation = new File(scriptLocation+( Array[String]("/..","external","wikitext-standalone-1.8.0-SNAPSHOT").mkString("/")))
+wikitextLocation.listFiles().filter { 
+							f => f.getName().endsWith(".jar")
+						}.foreach {
+							f => println(s"$f")
+						}
+
+var wikitextLibApache = new File(wikitextLocation.getAbsolutePath()+( Array[String]("/lib","apache-ant-1.8.4","lib").mkString("/") ))
+wikitextLibApache.listFiles().filter { 
+							f => f.getName().endsWith(".jar")
+						}.foreach {
+							f => println(s"$f")
+						}
+
+__EOF_SCALA_CLASSPATH__
+
+import java.io.File
+import java.net.URLClassLoader
+import java.net.URL
+import org.eclipse.mylyn.wikitext.core.util.anttask.MarkupToHtmlTask
+
+
+println("-- Welcome to Wikigen")
+
+var cl = Class.forName("org.eclipse.mylyn.wikitext.core.util.anttask.MarkupToHtmlTask");
+println(s"Class for Markup task: $cl")
+
+// Informations
+//----------------------
+
+//-- Local directory
+var baseDir = new File("").getAbsoluteFile()
+
+//sys.props.foreach {
+//	p => println(s"Prop: $p")
+//}
+
+
+// Go Gen
+//-----------------
+println(s"Generating HTML doc for all the .mediawiki files in ${baseDir} folder");
+var files = baseDir.listFiles()
+if (files != null) {
+	files.filter(_.getName().endsWith(".mediawiki")).foreach {
+	f => 
+		println("Converting: "+f.getName())
+		
+		// Create Task
+		//-------------------------
+		var convertTask = new org.eclipse.mylyn.wikitext.core.util.anttask.MarkupToHtmlTask()
+		convertTask.setFile(f)
+		convertTask.setMarkupLanguage("MediaWiki")
+		convertTask.execute()
+
+	}
+}
+
+

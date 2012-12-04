@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8' ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/></head><body><h1 id="Documentation_tooling">Documentation tooling</h1><p>This module provides some tools for documentation generation and XML transformation purpose</p><h2 id="XML_transform_for_Documentation_.3D">XML transform for Documentation =</h2><h3 id="Overview">Overview</h3><p>This tool helps transforming an XML document by applying a set of XSL transformations to it.
+It provides a mean to define some transformation processes which can contain:</p><ul><li>Multiple successive XSL chained transformations</li><li>Post Processing calls (for example XSL-FO to PDF using apache Batik)</li><li>Output file patterns definitions</li><li>...</li></ul><h3 id="Transformation_chain_definitions">Transformation chain definitions</h3><p>The transformation processes are described using XML documents, which are located using following means:</p><ul><li>Environement variable: ODFI_DOCBOOK_STYLESHEETS_REPS</li><li>Programming interface</li></ul><p>They can contain successive chained transformations like this:</p><p><code class="language-xml">
+&lt;Stylesheet name="specification-pdf"&gt;
+&lt;Description&gt;Description&lt;/Description&gt;
+	&lt;TransformChain&gt;
+		&lt;Stylesheet&gt;./spec-xsl/common/spec-xml-schema.xsl&lt;/Stylesheet&gt;
+		&lt;Stylesheet&gt;./spec-xsl/common/spec-validation.xsl&lt;/Stylesheet&gt;
+		&lt;Stylesheet&gt;./spec-xsl/common/spec-pre-end.xsl&lt;/Stylesheet&gt;
+		&lt;Stylesheet&gt;./spec-xsl/xsl-fo/spec-root-fo.xsl&lt;/Stylesheet&gt;
+	&lt;/TransformChain&gt;
+	&lt;Output&gt;
+		&lt;Path&gt;pdf/&lt;/Path&gt;
+		&lt;File&gt;fop.xconf&lt;/File&gt;
+		&lt;File&gt;log4j.xml&lt;/File&gt;
+	&lt;/Output&gt;
+	&lt;PostProcessing&gt;
+		&lt;Command&gt;$repositoryPath$/../external/apache-fop/transformToPDF $outputFile$ $outputFileFolder$ $outputFileName$.pdf&lt;/Command&gt;
+	&lt;/PostProcessing&gt;
+&lt;/Stylesheet&gt;
+</code></p><h3 id="Writing_documentation:_Docbook_format">Writing documentation: Docbook format</h3><p>Introduce docbook format for writing documentation</p><h3 id="Generator_usage">Generator usage</h3><p>Describe the usage of the odfi_collaboration_docbook command to transform a document</p><h3 id="Standard_transformations_chains">Standard transformations chains</h3><p>Some standart Transformation chains are provided by this tool to allow the user to produce nice documentation very fast</p><h4 id="Docbook_to_PDF">Docbook to PDF</h4><h4 id="Docbook_to_HTML_.3D">Docbook to HTML =</h4><h3 id="Standard_Stylesheets">Standard Stylesheets</h3><p>Describe the single stylesheets used by the standard transformation chains</p><h2 id="Wiki_files_to_Documentation">Wiki files to Documentation</h2><h2 id="Overview_2">Overview</h2><p>This tool helps achieving a rapid path from documentation writing to viewing.
+It allows writing some documentation in a Wiki file format (like mediawiki)</p><h2 id="Wiki_to_HTML_Usage">Wiki to HTML Usage</h2><ol><li>Open a file</li><li>Write some Wikimedia syntax in it</li><li>Save it with the .mediawiki extension</li><li>Call the "odfi_doc_wikigen" command to generate HTML</li></ol><h2 id="HTML_Viewer">HTML Viewer</h2><p>Viewer tool for ODFI documentation could be generalised</p></body></html>
