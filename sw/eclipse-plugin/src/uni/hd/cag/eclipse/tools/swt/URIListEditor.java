@@ -36,6 +36,8 @@ public class URIListEditor extends StringListEditor {
 		// TODO Auto-generated method stub
 		String result =  super.getNewInputObject();
 		
+		if (result==null)
+			return result;
 		
 		// Perform some escaping
 		//-----------------------------------
@@ -48,7 +50,7 @@ public class URIListEditor extends StringListEditor {
 		
 		
 		//-- If no scheme is provided, assume it is file://
-		try {
+		/*try {
 			URI uri = new URI(result);
 			if (uri.getScheme()==null) {
 				result = "file://"+result;
@@ -56,7 +58,8 @@ public class URIListEditor extends StringListEditor {
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		
 		
 		return result;
 		

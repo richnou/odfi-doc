@@ -3,6 +3,7 @@
  */
 package org.odfi.collaboration.docbook.core;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -13,6 +14,8 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import javax.xml.parsers.ParserConfigurationException;
+
+import net.sf.saxon.tree.iter.ArrayIterator;
 
 import org.odfi.collaboration.docbook.core.ooxoo.elements.Stylesheet;
 import org.odfi.collaboration.docbook.core.ooxoo.elements.Stylesheets;
@@ -31,17 +34,20 @@ import com.idyria.utils.java.collections.Pair;
  */
 public class StylesheetsLoader {
 
+	/**
+	 * Static reference for an eventual Singleton
+	 */
 	private static StylesheetsLoader ref = null;
 	
 	/**
 	 * Map repository id to the matching object
 	 */
-	private HashMap<String,StylesheetRepository> repositories = new HashMap<String,StylesheetRepository>();
+	protected HashMap<String,StylesheetRepository> repositories = new HashMap<String,StylesheetRepository>();
 	
 	/**
 	 * 
 	 */
-	private StylesheetsLoader() {
+	public StylesheetsLoader() {
 		
 		//-- Load the stylesheets
 		
@@ -64,7 +70,24 @@ public class StylesheetsLoader {
 		
 	}
 	
-	private void loadExternalRepositories() {
+	public void loadExternalRepositories() {
+		
+		// Load Preferences with Environment variable if there is one, otherwise don't touch it
+		//---------------------
+		String envExternalRepsString = System.getenv("ODFI_DOCBOOK_STYLESHEETS_REPS");
+		if (envExternalRepsString!=null) {
+			String[] externalEnvReps = envExternalRepsString.split(""+File.pathSeparatorChar);
+			for (String rep : externalEnvReps) {
+				try {
+					this.loadRepository(rep);
+				} catch (Exception e) {
+					// Remove wrong URL
+					//it.remove();
+					e.printStackTrace();
+				}
+			}
+		}
+		
 		/*
 		// Load Preferences with Environment variable if there is one, otherwise don't touch it
 		//---------------------
@@ -133,11 +156,39 @@ public class StylesheetsLoader {
 		//-- Try to open the URL
 		try {
 			
+			//-- all \ from windows like path must be converted to /
+			url = url.replace("\\", "/");
 			
-			//-- Get input stream: All URLss have to point to a folder
-			URI repositoryURI = new URI(url+"/stylesheets.xml");
-			InputStream repositoryDescriptorStream = repositoryURI.toURL().openStream();
-			System.err.println();
+			//-- Get input stream: All URLss have to point to an xml file
+			URI repositoryURI = new URI(url);
+			
+			//-- If not an XML file, add a default name
+			if (!repositoryURI.toString().endsWith(".xml") 
+					&& (repositoryURI.getScheme()==null || repositoryURI.getScheme().length()==1)) {
+				
+				// (add file scheme also)
+				repositoryURI = new URI(repositoryURI.toString()+"/"+"stylesheets.xml");
+				
+			} else if (!repositoryURI.toString().endsWith(".xml")) {
+				
+				repositoryURI = new URI(repositoryURI.toString()+"/stylesheets.xml");
+				
+			}
+			
+			//-- Add file scheme if a normal file path is provided
+			// (scheme length will be 1 under windows because Drive letter is taken as such)
+			if (repositoryURI.getScheme()==null || repositoryURI.getScheme().length()==1) {
+				repositoryURI = new URI("file:/"+repositoryURI.toString());
+			}
+			
+			//-- Open
+			InputStream repositoryDescriptorStream = null;
+			try {
+				repositoryDescriptorStream = repositoryURI.toURL().openStream();
+			} catch (IOException ioex) {
+				throw new MalformedURLException("Provided Stylesheet URI: "+repositoryURI.toString()+"(original: "+url+") could not be opened: "+ioex.getMessage());
+			}
+			//System.err.println();
 			
 			//-- Try to unoox
 			/*if (repositoryURI.getScheme().equals("file") && new File(repositoryURI.toURL().getFile()).isDirectory()) {
@@ -146,7 +197,7 @@ public class StylesheetsLoader {
 			InputStream repositoryDescriptorStream = (repositoryURI.getScheme()==null || repositoryURI.getScheme().equals("file")) ? new FileInputStream(new File(repositoryURI.getPath())):repositoryURI.toURL().openStream();
 			*/
 			
-			//--
+			//-- Unwrap and read
 			WrappingContext ctx = new WrappingContext();
 			ctx.getReplacementBuffersClassMap().put(Stylesheets.class, StylesheetRepository.class);
 			
@@ -248,6 +299,11 @@ public class StylesheetsLoader {
 		
 	}
 
+	/**
+	 * Getter for the singleton access
+	 * User can still instanciate this class as he whishes
+	 * @return
+	 */
 	public static synchronized StylesheetsLoader getInstance() {
 		
 		if (ref==null)

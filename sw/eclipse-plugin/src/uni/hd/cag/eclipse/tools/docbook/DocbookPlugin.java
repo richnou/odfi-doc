@@ -24,10 +24,26 @@ public class DocbookPlugin extends AbstractUIPlugin {
 	private static DocbookPlugin plugin;
 	
 	/**
+	 * Extended docbook core StylesheetLoader for Plugin context specific things
+	 */
+	private PluginStylesheetsLoader stylesheetsLoader = new PluginStylesheetsLoader();
+	
+	/**
 	 * The constructor
 	 */
 	public DocbookPlugin() {
 	}
+
+	
+	
+	
+	/**
+	 * @return the stylesheetsLoader
+	 */
+	public PluginStylesheetsLoader getStylesheetsLoader() {
+		return stylesheetsLoader;
+	}
+
 
 	/*
 	 * (non-Javadoc)

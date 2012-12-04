@@ -6,6 +6,10 @@
 	<Stylesheet name="specification-html">
 		<Description>Description</Description>
 		<TransformChain>
+			<Stylesheet>./spec-xsl/common/spec-bitarray.xsl</Stylesheet>
+			<Stylesheet>./spec-xsl/common/spec-xml-schema.xsl</Stylesheet>
+			<Stylesheet>./spec-xsl/common/spec-validation.xsl</Stylesheet>
+			<Stylesheet>./spec-xsl/common/spec-pre-end.xsl</Stylesheet>
 			<Stylesheet>./spec-xsl/html/spec-root.xsl</Stylesheet>
 		</TransformChain>
 		<Output>
@@ -17,6 +21,7 @@
 	<Stylesheet name="specification-pdf">
 		<Description>Description</Description>
 		<TransformChain>
+			<Stylesheet>./spec-xsl/common/spec-bitarray.xsl</Stylesheet>
 			<Stylesheet>./spec-xsl/common/spec-xml-schema.xsl</Stylesheet>
 			<Stylesheet>./spec-xsl/common/spec-validation.xsl</Stylesheet>
 			<Stylesheet>./spec-xsl/common/spec-pre-end.xsl</Stylesheet>
