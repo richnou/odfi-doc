@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Docbook Processor
 Bundle-SymbolicName: org.odfi.collaboration.docbook;singleton:=true
-Bundle-Version: 1.1.3
+Bundle-Version: 1.1.6
 Bundle-Activator: uni.hd.cag.eclipse.tools.docbook.DocbookPlugin
 Bundle-Vendor: CAG/ODFi Uni Heidelberg
 Require-Bundle: org.eclipse.ui,

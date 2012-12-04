@@ -65,10 +65,12 @@ public class StylesheetRepository extends Stylesheets {
 
 	/**
 	 * Do transformation
+	 * Pay attention to exception behaviour!
 	 * @param sourceFile IFile to tranform
 	 * @param stylesheet Stylesheet to apply
+	 * @throws RuntimeException Carries out any exception that might have Occured without logging!
 	 */
-	public void transform(File sourceFile,Stylesheet stylesheet) {
+	public void transform(File sourceFile,Stylesheet stylesheet) throws RuntimeException {
 		
 		
 		try {
@@ -345,28 +347,33 @@ public class StylesheetRepository extends Stylesheets {
 			}
 			
 		} catch (URISyntaxException e) {
-			TeaLogging.teaLogSevere(e);
-			e.printStackTrace();
+			//TeaLogging.teaLogSevere(e);
+			//e.printStackTrace();
+			throw new RuntimeException(e);
 		} catch (FileNotFoundException e) {
-			TeaLogging.teaLogSevere(e);
-			e.printStackTrace();
+			//TeaLogging.teaLogSevere(e);
+			//e.printStackTrace();
+			throw new RuntimeException(e);
 		} catch (MalformedURLException e) {
-			TeaLogging.teaLogSevere(e);
-			e.printStackTrace();
+			//TeaLogging.teaLogSevere(e);
+			//e.printStackTrace();
+			throw new RuntimeException(e);
 		} catch (IOException e) {
-			TeaLogging.teaLogSevere(e);
-			e.printStackTrace();
+			//TeaLogging.teaLogSevere(e);
+			//e.printStackTrace();
+			throw new RuntimeException(e);
 		} catch (TransformerConfigurationException e) {
-			TeaLogging.teaLogSevere(e);
-			e.printStackTrace();
-			//throw new RuntimeException(e);
+			//TeaLogging.teaLogSevere(e);
+			//e.printStackTrace();
+			throw new RuntimeException(e);
 		} catch (TransformerException e) {
-			TeaLogging.teaLogSevere(e);
-			e.printStackTrace();
-			//throw new RuntimeException(e);
+			//TeaLogging.teaLogSevere(e);
+			//e.printStackTrace();
+			throw new RuntimeException(e);
 		} catch (Throwable e) {
-			TeaLogging.teaLogSevere(e);
-			e.printStackTrace();
+			//TeaLogging.teaLogSevere(e);
+			//e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 	

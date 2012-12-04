@@ -45,6 +45,9 @@ public class DocbookBuilder extends IncrementalProjectBuilder {
 		super();
 		
 		TeaLogging.getLogger(DocbookBuilder.class.getCanonicalName()).addHandler(ConsoleFactory.getLoggingHandler());
+		TeaLogging.getLogger(StylesheetRepository.class.getCanonicalName()).addHandler(ConsoleFactory.getLoggingHandler());
+		TeaLogging.getLogger(StylesheetRepository.class.getSimpleName()).addHandler(ConsoleFactory.getLoggingHandler());
+		
 	}
 	
 	private class DeltaVisitor implements IResourceDeltaVisitor {
@@ -109,11 +112,11 @@ public class DocbookBuilder extends IncrementalProjectBuilder {
 						//-- Show a building message
 						//ConsolePlugin.getDefault().getConsoleManager().getConsoles()
 						
-						ConsoleFactory.logInfo("We have an XML document and stylesheet: "+stylesheet);
+						ConsoleFactory.logInfo("----- We have an XML document and stylesheet: "+stylesheet);
 						
 						// Find Back stylesheet
 						//-----------------------------
-						Pair<StylesheetRepository,Stylesheet> styleSheetPair = StylesheetsLoader.getInstance().getStylesheet(stylesheet);
+						Pair<StylesheetRepository,Stylesheet> styleSheetPair = DocbookPlugin.getDefault().getStylesheetsLoader().getStylesheet(stylesheet);
 						
 						
 						// Apply Transformation
@@ -122,9 +125,14 @@ public class DocbookBuilder extends IncrementalProjectBuilder {
 							ConsoleFactory.logInfo("Stylesheet or Repository not found");
 						} else {
 							
-							ConsoleFactory.logInfo("Building XML");
+							ConsoleFactory.logInfo("----- Building XML");
+							try {
 							styleSheetPair.getLeft().transform(changedFile.getLocation().toFile(), styleSheetPair.getRight());
 							changedFile.refreshLocal(0, null);
+							} catch (Throwable e) {
+								ConsoleFactory.logInfo("----- An exception has been thrown while transforming: "+e.getMessage());
+								ConsoleFactory.logThrowable(e);
+							}
 						}
 					}
 					

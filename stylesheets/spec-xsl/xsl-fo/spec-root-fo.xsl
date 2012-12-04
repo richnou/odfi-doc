@@ -4,7 +4,8 @@
 	xmlns:fn="http://www.w3.org/2005/xpath-functions"
 	xmlns:docbook="http://docbook.org/ns/docbook"
     xmlns:fo="http://www.w3.org/1999/XSL/Format"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    >
  
     <!-- XML Output -->
     <xsl:output
@@ -14,7 +15,7 @@
         indent="yes"
         />
         
-       
+        
     <!-- 
     	
     	Parameters to control output
@@ -51,6 +52,7 @@
     <xsl:attribute-set name="format-emphasis">
         <xsl:attribute name="font-weight">bold</xsl:attribute>
     </xsl:attribute-set>
+   
     
     <!-- #### Cover page  -->
     <xsl:attribute-set name="cover-page-title">
@@ -145,30 +147,10 @@
         <xsl:attribute name="border">1px gray solid</xsl:attribute>
     </xsl:attribute-set>
 
-    <!-- #### Apply classes -->
-    <xsl:template name="classes">
-        <xsl:param name="class" required="yes"></xsl:param>
-    
-        <!-- ##### Formatting -->
-        <xsl:choose>
-            <xsl:when test="$class='spec-format-bg-lightblue'">
-                <xsl:attribute name="background-color" select="$colors-lightblue"></xsl:attribute>
-            </xsl:when>
-            <xsl:when test="$class = spec-format-bold">
-                <xsl:attribute name="font-weight">bold</xsl:attribute>
-            </xsl:when>    
-        </xsl:choose>
-    
-        <!-- ##### Table -->
-         <xsl:choose>
-            <xsl:when test="$class='spec-table-alternate1'">
-                <xsl:attribute name="background-color" select="$colors-lightgray"></xsl:attribute>
-                <xsl:attribute name="text-align">center</xsl:attribute>
-            </xsl:when>
-         </xsl:choose>
-    
-    </xsl:template>
-    
+    <!-- #### Links -->
+    <xsl:attribute-set name="link-common">
+        <xsl:attribute name="text-decoration">underline,blink</xsl:attribute>
+    </xsl:attribute-set> 
     
     
 	<xsl:template match="//docbook:article">
@@ -196,15 +178,15 @@
                 	margin-left="1cm" 
                 	margin-right="1cm">
                 	
-                	<fo:region-body margin="2cm 1cm 2cm 1cm"/>
+                	<fo:region-body margin="2cm 0cm 2cm 0cm"/>
                 	
                 	<!-- Above / Under -->
                 	<fo:region-before extent="2cm"/>
                   	<fo:region-after extent="2cm"></fo:region-after>
                   
                   	<!-- Left / Right -->
-                  	<fo:region-start extent="1cm"/>
-                  	<fo:region-end extent="1cm">
+                  	<fo:region-start extent="0cm"/>
+                  	<fo:region-end extent="0cm">
      
                   </fo:region-end>
                 </fo:simple-page-master>
@@ -277,7 +259,8 @@
 
 	</xsl:template>
 	
-	<!-- Generate a toc as Bookmarks -->
+	
+	<!-- ################## BOOKMARKS ############################# -->
     <xsl:template name="toc-bookmark">
        
            <!-- ## Go through Sections to build outline -->
@@ -307,7 +290,18 @@
         <xsl:variable name="toc-hier-level"><xsl:value-of select="fn:count(fn:tokenize($toc-hier-pos,'\.'))"></xsl:value-of></xsl:variable>
         
         <fo:bookmark>
-            <xsl:attribute name="internal-destination">ref-toc-<xsl:value-of select="$toc-hier-pos"/></xsl:attribute>
+            
+            <!-- Destination is the setup id attribute -->
+            <!-- Set an attribute to the section element is none found -->
+            <xsl:choose>
+                <xsl:when test="@id|@xml:id">
+                    <xsl:attribute name="internal-destination"><xsl:value-of select="@id|@xml:id"/></xsl:attribute>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:attribute name="internal-destination">ref-toc-<xsl:value-of select="$toc-hier-pos"/></xsl:attribute>
+                </xsl:otherwise>
+            </xsl:choose>
+            
             <fo:bookmark-title>
                 <xsl:value-of select="$toc-hier-pos"/>
                 <xsl:text>. </xsl:text>
@@ -363,7 +357,15 @@
 			<fo:basic-link>			
 			
 				<!-- Reference -->
-				<xsl:attribute name="internal-destination">ref-toc-<xsl:value-of select="$toc-hier-pos"/></xsl:attribute>
+				<xsl:choose>
+                <xsl:when test="@id|@xml:id">
+                    <xsl:attribute name="internal-destination"><xsl:value-of select="@id|@xml:id"/></xsl:attribute>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:attribute name="internal-destination">ref-toc-<xsl:value-of select="$toc-hier-pos"/></xsl:attribute>
+                </xsl:otherwise>
+                </xsl:choose>
+<!-- 				<xsl:attribute name="internal-destination">ref-toc-<xsl:value-of select="$toc-hier-pos"/></xsl:attribute> -->
 				
 				<!-- Text -->
 				<fo:inline>
@@ -555,6 +557,38 @@
 	</xsl:template>
 	
 	
+	<!-- 
+        ###################
+        Functions
+        ###################
+     -->
+
+    <!-- Attributes to be preserved to results -->
+    <xsl:template name="preserve-attributes">
+    
+        <!-- Preserve xml:id -->
+        <xsl:if test="@xml:id">
+            <xsl:attribute name="id" select="@xml:id"></xsl:attribute>
+        </xsl:if>
+        <xsl:if test="@id">
+            <xsl:attribute name="id" select="@id"></xsl:attribute>
+        </xsl:if>
+    
+<!--         <xsl:attribute name="test">test</xsl:attribute> -->
+        
+    </xsl:template>
+	
+	<!-- #################### IDENTITIES ############### -->
+
+<!--     ## Propagate all id attributes -->
+<!--     <xsl:template match="@id|@xml:id" mode="content">  -->
+        
+    
+<!--         <xsl:copy-of select="."></xsl:copy-of> -->
+    
+<!--        <xsl:copy select="."></xsl:copy> -->
+<!--     </xsl:template> -->
+	
 	<!-- ## Include subsheets for various content handling splitting -->
 	<!-- #################################################### -->
 	<!-- Include Section content processing -->
@@ -564,6 +598,8 @@
 	<!-- Include Extra content processing -->
 	<xsl:include href="spec-plan-fo.xsl"/>
 
+    
+
     <!-- Ignores -->
     <xsl:template match="*" mode="info">
     </xsl:template>
@@ -571,6 +607,9 @@
     </xsl:template>
     <xsl:template match="docbook:revhistory" mode="#all">
     </xsl:template>
+
+
+    
 
 	
 	

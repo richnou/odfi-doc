@@ -6,6 +6,13 @@
     xmlns:fo="http://www.w3.org/1999/XSL/Format"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     
+    
+    <!-- 
+        ######################
+        Sectioning
+        ######################
+     -->
+    
     <!-- Template to display sections as real content -->
     <xsl:template match="docbook:section" mode="content">
     
@@ -63,13 +70,19 @@
     <!-- #### Handle title content -->
     <xsl:template name="title-content">
     	
+    	<xsl:call-template name="preserve-attributes"></xsl:call-template>
+    	
     	<!-- ## Prepare Datas -->
         <!-- ####################################### -->
         <xsl:variable name="toc-hier-pos"><xsl:number from="//docbook:article" level="multiple"></xsl:number></xsl:variable>
         <xsl:variable name="toc-hier-level"><xsl:value-of select="fn:count(fn:tokenize($toc-hier-pos,'\.'))"></xsl:value-of></xsl:variable>
     	
-    	<!-- ID -->
-        <xsl:attribute name="id">ref-toc-<xsl:value-of select="$toc-hier-pos"/></xsl:attribute>
+    	<!-- ID (either already set, or added)-->
+<!--     	<xsl:variable name="title-id" select="@id"></xsl:variable> -->
+    	<xsl:if test="not(@id|@xml:id)">
+    	   <xsl:attribute name="id">ref-toc-<xsl:value-of select="$toc-hier-pos"/></xsl:attribute>
+    	</xsl:if>
+<!--         <xsl:attribute name="id">ref-toc-<xsl:value-of select="$toc-hier-pos"/></xsl:attribute> -->
         
         <!-- #### Styling -->
         
@@ -95,10 +108,17 @@
     
     </xsl:template>
     
+    <xsl:template match="docbook:bridgehead">
+       <fo:block xsl:use-attribute-sets="format-emphasis">
+       <xsl:value-of select="text()"></xsl:value-of>
+       </fo:block> 
     
+    </xsl:template>
     
     <!-- 
+        ######################
         Figure Handling. only support image at the moment
+        ######################
      -->
      <xsl:template match="docbook:figure" mode="content">
         <fo:block margin-top="2em" margin-bottom="2em" text-align="center">
@@ -128,6 +148,7 @@
 		</fo:block>
      </xsl:template>
      
+  
      
     <!--
      	######################
@@ -135,7 +156,7 @@
      	######################
      -->
      <xsl:template match="docbook:table" mode="content">
-     
+            
      	
      		<!-- Caption? -->
 			<!-- ######## -->
@@ -150,6 +171,8 @@
      		<!-- Table -->
      		<!-- ##### -->
 			<fo:table xsl:use-attribute-sets="table-margin-attributes table-border-style">
+
+                <xsl:call-template name="preserve-attributes"></xsl:call-template>
 
 				<!-- #### Styling -->
 				
@@ -172,6 +195,15 @@
 					</fo:table-header>
 				</xsl:if>
 				
+				<!-- #### Footer -->
+                <xsl:if test="docbook:tfoot">
+                    <fo:table-footer>
+                        <xsl:call-template name="table-rowcell">
+                            <xsl:with-param name="base" select="docbook:tfoot"></xsl:with-param>
+                        </xsl:call-template>
+                    </fo:table-footer>
+                </xsl:if>
+				
 				<!-- #### Body -->
 				<xsl:if test="./docbook:tbody">
 					<fo:table-body>
@@ -181,14 +213,7 @@
 					</fo:table-body>
 				</xsl:if>
 				
-				<!-- #### Footer -->
-				<xsl:if test="docbook:tfoot">
-					<fo:table-footer>
-						<xsl:call-template name="table-rowcell">
-							<xsl:with-param name="base" select="docbook:tfoot"></xsl:with-param>
-						</xsl:call-template>
-					</fo:table-footer>
-				</xsl:if>
+				
 			
 			</fo:table>
 
@@ -282,10 +307,8 @@
     <xsl:template match="docbook:itemizedlist/docbook:listitem" mode="content">
 		<fo:list-item>
 	   		<fo:list-item-label>
-	     		<fo:block>
-	     			<!-- UTF8 bullet character -->
-	       			&#8226;
-	     		</fo:block>
+	   		    <!-- UTF8 bullet character -->
+	     		<fo:block>&#8226;</fo:block>
 	   		</fo:list-item-label>
 	   		<fo:list-item-body start-indent="body-start()">
 	      		<fo:block>
@@ -310,17 +333,97 @@
 	  </fo:list-item>
 	</xsl:template>
 	
+	<xsl:template match="docbook:listitem/docbook:para" mode="content">
+       
+       <!--  xsl:use-attribute-sets="block-common" -->
+       <fo:block xsl:use-attribute-sets="block-common">
+            <xsl:apply-templates  mode="content"></xsl:apply-templates>
+       </fo:block>
+       
+       
+       
+    </xsl:template>
+	
      
     <!-- ## IGNORE: title -->
     <xsl:template match="docbook:title" mode="content">
       
     </xsl:template>
     
+    
+    <!-- 
+        ######################
+        Link And XREF
+        ######################
+     -->
+    <xsl:template match="docbook:link" mode="content">
+    
+        <fo:basic-link internal-destination="{@linkend}" xsl:use-attribute-sets="link-common">
+            <xsl:apply-templates mode="content"></xsl:apply-templates>
+        </fo:basic-link>
+    
+    </xsl:template> 
+    
+    <xsl:template match="docbook:xref" mode="content">
+        
+        <xsl:variable name="le" select="@linkend"></xsl:variable>
+        
+        <fo:basic-link internal-destination="{@linkend}" xsl:use-attribute-sets="link-common">
+	        <!-- Get xref Target title -->
+	        <!-- ##### -->
+	       
+	        <xsl:variable name="target" select="fn:id(@linkend)"></xsl:variable>
+<!--             <xsl:variable name="target" select="id(@linkend)"></xsl:variable>  -->
+	        <xsl:choose>
+	           <!--  Section: title/text or @title -->
+	           <xsl:when test="fn:local-name($target)='section' and $target/docbook:title/text()">
+	               <xsl:value-of select="$target/docbook:title/text()"></xsl:value-of>
+	           </xsl:when>
+	           <xsl:when test="fn:local-name($target)='section' and $target/@title">
+                   <xsl:value-of select="$target/@title"></xsl:value-of>
+               </xsl:when>
+	           
+	           <!-- Fallback -->
+	           <xsl:otherwise>
+	            Could not determine text-output for link <xsl:value-of select="$target"></xsl:value-of>
+	           </xsl:otherwise>
+	        </xsl:choose>
+	        <!-- Get Target -->
+       
+        </fo:basic-link>
+    
+    </xsl:template> 
+     
+   
     <!--
         ######################
         Common formatting
         ######################
     --> 
+    
+    <!-- #### Apply classes -->
+    <xsl:template name="classes">
+        <xsl:param name="class" required="yes"></xsl:param>
+    
+        <!-- ##### Formatting -->
+        <xsl:choose>
+            <xsl:when test="$class='spec-format-bg-lightblue'">
+                <xsl:attribute name="background-color" select="$colors-lightblue"></xsl:attribute>
+            </xsl:when>
+            <xsl:when test="$class = spec-format-bold">
+                <xsl:attribute name="font-weight">bold</xsl:attribute>
+            </xsl:when>    
+        </xsl:choose>
+    
+        <!-- ##### Table -->
+         <xsl:choose>
+            <xsl:when test="$class='spec-table-alternate1'">
+                <xsl:attribute name="background-color" select="$colors-lightgray"></xsl:attribute>
+                <xsl:attribute name="text-align">center</xsl:attribute>
+            </xsl:when>
+         </xsl:choose>
+    
+    </xsl:template>
     
     
     <!-- #### Transfers class/style attributes to set attribute on called element -->
@@ -350,18 +453,29 @@
     <xsl:template match="docbook:section/docbook:para" mode="content">
        
        <!--  xsl:use-attribute-sets="block-common" -->
-       <fo:block xsl:use-attribute-sets="block-common" linefeed-treatment="preserve" white-space-collapse="false" white-space-treatment="ignore-if-before-linefeed">
+       <!--  white-space-collapse="false" white-space-treatment="ignore-if-before-linefeed" linefeed-treatment="preserve" -->
+       <fo:block xsl:use-attribute-sets="block-common" >
        		<xsl:apply-templates  mode="content"></xsl:apply-templates>
        </fo:block>
        
+       
+       
     </xsl:template>
+    
+  
+    
     
     <xsl:template match="docbook:para" mode="content">
        
        <!--  xsl:use-attribute-sets="block-common" -->
-       <fo:block xsl:use-attribute-sets="block-common" linefeed-treatment="preserve" white-space-collapse="false" white-space-treatment="ignore-if-before-linefeed">
-       		<xsl:apply-templates  mode="content"></xsl:apply-templates>
-       </fo:block>
+<!--        <fo:block xsl:use-attribute-sets="block-common" linefeed-treatment="preserve" white-space-collapse="false" white-space-treatment="ignore-if-before-linefeed"> -->
+<!--        		<xsl:apply-templates  mode="content"></xsl:apply-templates> -->
+<!--        </fo:block> -->
+
+           <fo:block xsl:use-attribute-sets="block-common">
+               <xsl:apply-templates  mode="content"></xsl:apply-templates>
+           </fo:block>
+
        
     </xsl:template>
     
@@ -381,5 +495,14 @@
         </fo:block>
     </xsl:template>
     
+    
+     <!-- ## Propagate all id attributes -->
+    <xsl:template match="@id|@xml:id" mode="content"> 
+        
+        <xsl:copy><xsl:apply-templates mode="content"></xsl:apply-templates></xsl:copy>
+<!--         <xsl:copy-of select="."></xsl:copy-of> -->
+    
+<!--        <xsl:copy select="."></xsl:copy> -->
+    </xsl:template>
     
 </xsl:stylesheet>

@@ -24,6 +24,10 @@ import uni.hd.cag.eclipse.tools.swt.URIListEditor;
 public class DocBookPreferencePage extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
 
+	private StylesheetsListTree stylesheetsTree = null;
+	
+	private URIListEditor externalRepsAddedList = null;
+	
 	/**
 	 * 
 	 */
@@ -60,8 +64,8 @@ public class DocBookPreferencePage extends FieldEditorPreferencePage implements
 		
 		//-- Create a tree to show all the stylesheets
 		//-----------------------------
-		StylesheetsListTree stylesheetsTree = new StylesheetsListTree(page);
-		
+		this.stylesheetsTree = new StylesheetsListTree(page);
+		this.stylesheetsTree.refresh();
 		
 		page.pack();
 		return page;
@@ -82,8 +86,9 @@ public class DocBookPreferencePage extends FieldEditorPreferencePage implements
 		// externalEnvRepsLabel.setText("Stylesheets repositories extracted from Environment variable DOCBOOK_STYLESHEETS_REPS");
 
 		// -------- Edit the list of additional repositories
-		URIListEditor externalRepsAddedList = new URIListEditor("reps.external.added",
+		this.externalRepsAddedList = new URIListEditor("reps.external.added",
 				"Stylesheets repositories added in preferences",this.getFieldEditorParent());
+		
 		externalRepsAddedList.setPropertyChangeListener(new IPropertyChangeListener() {
 			
 			@Override
@@ -92,6 +97,7 @@ public class DocBookPreferencePage extends FieldEditorPreferencePage implements
 				
 			}
 		});
+		
 		this.addField(externalRepsAddedList);
 	}
 
@@ -99,14 +105,23 @@ public class DocBookPreferencePage extends FieldEditorPreferencePage implements
 	public boolean performOk() {
 		
 		// Reload Stylesheets
-		StylesheetsLoader.getInstance().load();
+		//StylesheetsLoader.getInstance().load();
+		this.externalRepsAddedList.store();
+		DocbookPlugin.getDefault().getStylesheetsLoader().reloadFromPreferences();
+		stylesheetsTree.refresh();
+		
 		return super.performOk();
 	}
 
 	@Override
 	protected void performApply() {
+		
 		// Reload Stylesheets
-		StylesheetsLoader.getInstance().load();
+		//StylesheetsLoader.getInstance().load();
+		this.externalRepsAddedList.store();
+		DocbookPlugin.getDefault().getStylesheetsLoader().reloadFromPreferences();
+		stylesheetsTree.refresh();
+		
 		super.performApply();
 	}
 	

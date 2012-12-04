@@ -106,7 +106,7 @@ public class DocbookBuilderPropertyPage extends PropertyPage {
 		c1.setResizable(true);
 
 		// -- Add a row per available stylesheet
-		for (String str : StylesheetsLoader.getInstance()
+		for (String str : DocbookPlugin.getDefault().getStylesheetsLoader()
 				.getPossibleStylesheetsArray()) {
 
 			TableItem it = new TableItem(this.stylesheetsTable, NONE);

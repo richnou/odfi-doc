@@ -3,9 +3,18 @@
  */
 package uni.hd.cag.eclipse.tools.swt;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.ListEditor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * @author rleys
@@ -58,9 +67,47 @@ public class StringListEditor extends ListEditor {
 	@Override
 	protected String getNewInputObject() {
 		
-		//-- Show dialog
-		InputDialog newstring = new InputDialog(this.getShell(), "Enter a new value","", "", null);
+		//-- Show dialog for new Value
+		//--  * Dialog has a special file button
+		//---------------------------------
+		InputDialog newstring = new InputDialog(this.getShell(), "Enter a new value","", "", null) {
+
+			protected Text getTextComponent() {
+				return this.getText();
+			}
+			
+			@Override
+			protected void createButtonsForButtonBar(Composite parent) {
+				// TODO Auto-generated method stub
+				super.createButtonsForButtonBar(parent);
+				
+				//-- File Selection Button
+				Button fileSelectionButton = this.createButton(this.getShell(), IDialogConstants.CLIENT_ID+1, "Choose File", false);
+				fileSelectionButton.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						
+						System.out.println("Opening File Selection");
+						
+						//-- Open File Selection View
+						FileDialog dialog = new FileDialog (getShell(), SWT.OPEN);
+						String [] filterNames = new String [] {"XMLFiles"};
+						String [] filterExtensions = new String [] {"*.xml"};
+						dialog.setFilterNames (filterNames);
+						dialog.setFilterExtensions (filterExtensions);
+						//dialog.b
+						String selectedFile = dialog.open();
+						
+						//-- Put result in box
+						getTextComponent().setText(selectedFile);
+					}
+				});
+	
+			}
+			
+			
+		};
 		newstring.setBlockOnOpen(true);
+		
 		if (newstring.open()==InputDialog.OK) {
 			
 			//-- return new value
