@@ -178,7 +178,7 @@ public class StylesheetsLoader {
 			//-- Add file scheme if a normal file path is provided
 			// (scheme length will be 1 under windows because Drive letter is taken as such)
 			if (repositoryURI.getScheme()==null || repositoryURI.getScheme().length()==1) {
-				repositoryURI = new URI("file:/"+repositoryURI.toString());
+				repositoryURI = new URI("file://"+repositoryURI.toString());
 			}
 			
 			//-- Open

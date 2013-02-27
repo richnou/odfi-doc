@@ -4,13 +4,13 @@
 // Classpath
 //-------------------
 
-@GrabResolver(name='localm2', root='file:///home/rleys/git/idyria/dev-tools-maven/repository/', m2compatible="true")
+@GrabResolver(name='localm2', root='file:///local/home/rleys/git/osi/dev-tools/repository/', m2compatible="true")
 @GrabResolver(name='idyria', root='http://www.idyria.com/access/osi/artifactory/libs-release-local', m2compatible="true")
-@Grab(group='org.odfi.collaboration.docbook', module='docbook-core', version='1.1-SNAPSHOT', changing=true)
+@Grab(group='org.odfi.collaboration.docbook', module='docbook-core', version='1.2-SNAPSHOT', changing=true)
 import org.odfi.collaboration.docbook.core.*
 import java.util.logging.*;
 
-@Grab(group='com.idyria.osi.java-utils', module='tea', version='1.4-SNAPSHOT',  changing=true)
+@Grab(group='com.idyria.osi.java-utils', module='tea', version='1.5-SNAPSHOT',  changing=true)
 import com.idyria.utils.java.os.OSDetector;
 import com.idyria.utils.java.os.OSDetector.OS;
 

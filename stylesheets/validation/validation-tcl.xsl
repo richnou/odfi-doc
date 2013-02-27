@@ -39,13 +39,13 @@ if {[info tclversion] != 8.5} {
 }
 
 ## We need ITCL
-package require Itcl 3.3
+package require Itcl 3.4
 
 ## We need ODFI TCl utilities
-package require odfi.common 1.0.0
+package require odfi::common 1.0.0
 
 ## Source validation tools
-source ../../sw/tcl/validation_xml_utils.tcl
+source ../../../sw/validation-tcl/validation_xml_utils.tcl
 
 ## Preset some variables and tools
 ####################################
@@ -54,10 +54,13 @@ source ../../sw/tcl/validation_xml_utils.tcl
 ## resume: to resume the test procedure at some point
 ## tester (mandatory) : to provide the name of the tester to be reported
 ## testerBoardID : to provide the ID of the board beeing tested per hand (for the tester side)
-odfi::common::getOptionsFromArgumentOrIni "test_run.ini" "tester:" "resume?:" "testerBoardID:?"
+odfi::common::getOptionsFromArgument "tester:" "resume?:" "testerBoardID:?" "validationID:?"
 
-#### Validation ID is the id for the complete process
+#### Validation ID is the id for the complete process, or the provided argument
 set validationId <xsl:value-of select="@id"/>
+if {$odfi::common::argv_validationID!=false} {
+	set validationId $odfi::common::argv_validationID
+}
 
 #### Prepare validation report
 ValidationProcessReport validationProcessReport
@@ -85,6 +88,25 @@ set testRunFatal false
 
 ## Verifications
 #############################
+
+#### validation Id must be in the possible validationIds List
+#### The possible validationIDs list is: the @id of process, or the provided ValidationIDs
+set possibleValidationIds {}
+<xsl:for-each select="./odfi:ValidationIDs/odfi:ValidationID">
+lappend possibleValidationIds "<xsl:value-of select='string(.)'/>"
+</xsl:for-each>
+if {[llength $possibleValidationIds]==0} {
+	lappend possibleValidationIds <xsl:value-of select="@id"/>
+}
+
+# Search
+set selectedValidationId [lsearch -inline $possibleValidationIds "*$validationId*"]
+if {$selectedValidationId==""} {
+	odfi::common::logError "Selected validation ID is $validationId, but allowed are: $possibleValidationIds. Please select a correct one using -validationID"
+	exit -1
+} else {
+	set validationId $selectedValidationId
+}
 
 ## Source pre and post run
 source test_pre_run.tcl
