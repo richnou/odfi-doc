@@ -23,7 +23,7 @@
 
 
     <!-- Match on validation -->
-    <xsl:template match="/odfi:ValidationProcess">#!/usr/bin/env tclsh
+    <xsl:template match="/odfi:ValidationProcess">#!/usr/bin/env tclsh8.5
   
 #############################################################
 ## Validation Procedure for: <xsl:value-of select="@name"/>
@@ -51,21 +51,49 @@ source ../../../sw/validation-tcl/validation_xml_utils.tcl
 ####################################
 
 #### Command Line arguments
-## resume: to resume the test procedure at some point
-## tester (mandatory) : to provide the name of the tester to be reported
-## testerBoardID : to provide the ID of the board beeing tested per hand (for the tester side)
-odfi::common::getOptionsFromArgument "tester:" "resume?:" "testerBoardID:?" "validationID:?"
+odfi::common::getOptionsFromArgument "help?" "tester:" "resume?:" "testerSubjectID:?" "validationID:?" "match?:"
 
 #### Validation ID is the id for the complete process, or the provided argument
 set validationId <xsl:value-of select="@id"/>
 if {$odfi::common::argv_validationID!=false} {
 	set validationId $odfi::common::argv_validationID
 }
+set possibleValidationIds {}
+<xsl:for-each select="./odfi:ValidationIDs/odfi:ValidationID">
+lappend possibleValidationIds "<xsl:value-of select='string(.)'/>"
+</xsl:for-each>
+
+
+
+
+####### Show Help and usage?
+if {$odfi::common::argv_help!=false} {
+	puts "Usage:"
+	puts "* Mandatory parameters"
+	puts " -resume: to resume the test procedure at some point"
+	puts " -tester (mandatory) : to provide the name of the tester to be reported"
+	puts " -testerSubjectID : provides the ID of the board beeing tested per hand (for the tester side)"
+	puts "* Optional parameters"
+	puts " -match: give a string match argument to select only specific tests to be run"
+	puts " -validationID: If a validation procedure matches different validation ID on the server (ex: Same product, but different selling codes), provide here the right code"
+	
+	puts ""
+	puts "Available Validation IDs (-validationID only required if more than one are available)"
+	foreach vid $possibleValidationIds {
+		puts "  $vid"
+	}
+	exit 0
+}
+
+
 
 #### Prepare validation report
 ValidationProcessReport validationProcessReport
 validationProcessReport setTester $odfi::common::argv_tester
 validationProcessReport setId $validationId
+if {$odfi::common::argv_testerSubjectID!=false} {
+    validationProcessReport setTesterSubjectID $odfi::common::argv_testerSubjectID
+}
 
 #### Prepare test resume (resume argument saves which test the process last started, to allow interruption for non fully automatic steps)
 set resumeAt -1
@@ -91,10 +119,6 @@ set testRunFatal false
 
 #### validation Id must be in the possible validationIds List
 #### The possible validationIDs list is: the @id of process, or the provided ValidationIDs
-set possibleValidationIds {}
-<xsl:for-each select="./odfi:ValidationIDs/odfi:ValidationID">
-lappend possibleValidationIds "<xsl:value-of select='string(.)'/>"
-</xsl:for-each>
 if {[llength $possibleValidationIds]==0} {
 	lappend possibleValidationIds <xsl:value-of select="@id"/>
 }
@@ -140,6 +164,32 @@ if {$allScriptsFound==false} {
 ##############################
 puts "Sourcing the implementation scripts..."
 <xsl:apply-templates mode="source-scripts"></xsl:apply-templates>
+
+## Verify Parameters for all tests are there
+################################
+puts "Verifying the Required parameters are provided..."
+<xsl:for-each select="descendant::odfi:Validation/odfi:Parameter">
+	<xsl:variable name="pname">
+		<xsl:value-of select='../@name'/>_<xsl:value-of select='@name'/>
+	</xsl:variable>
+#### Look for parameter
+if {[catch {odfi::common::handleCommandLineOption "param_<xsl:value-of select='$pname'/>:"} errormsg]} {
+
+    set param_<xsl:value-of select='$pname'/> false
+
+} else {
+    set param_<xsl:value-of select='$pname'/> $odfi::common::argv_param_<xsl:value-of select='$pname'/>
+}
+## If false, fail
+if {$param_<xsl:value-of select='$pname'/>==false} {
+    error "Required Argument param_<xsl:value-of select='$pname'/> was not provided"
+}
+
+
+</xsl:for-each>
+
+
+
 ## Call The tests
 ###############################
 puts "Running tests"
@@ -214,23 +264,43 @@ set lastValidation [validationProcessReport addValidationReport <xsl:value-of se
     
 <!-- Test -->
 <xsl:template match="odfi:Test" mode="run">
-puts "Test <xsl:value-of select="../@name"/>/test_<xsl:value-of select="@name"/>"
-puts "-------------"
-set testReport [validationProcessReport addTestReport $lastValidation <xsl:value-of select="@name"/>]
-if {$testRunFatal==true} {
-    ## In case of previous fatal error -> Fail strictly
-    validationProcessReport addError "Test not run because of previous fatal error" $testReport
-} elseif {[catch {set testResult [test_<xsl:value-of select="@name"/>]} err]} {
-    validationProcessReport addError $err $testReport
-    set testRunSuccess false
-    <xsl:if test="./@fatal='true'">
-     ## If Fatal test, register error
-    set testRunFatal true
-    </xsl:if>
-} else {
-    validationProcessReport addTestReportResult $testReport $testResult
+if {$odfi::common::argv_match==false || ($odfi::common::argv_match!=false <xsl:text><![CDATA[&&]]></xsl:text>[string match $odfi::common::argv_match shortcuts_and_iddq_test_report_iddq]==1)} {
+	puts "Test <xsl:value-of select="../@name"/>/test_<xsl:value-of select="@name"/>"
+	puts "-------------"
+	set testReport [validationProcessReport addTestReport $lastValidation <xsl:value-of select="@name"/>]
+	
+	## Parameters
+	set parameters {}
+	if {$testRunFatal!=true} {
+   <xsl:for-each select="../odfi:Parameter">
+   		<xsl:variable name="pname">
+			<xsl:value-of select='../@name'/>_<xsl:value-of select='@name'/>
+		</xsl:variable>
+		lappend parameters $param_<xsl:value-of select="$pname"></xsl:value-of>
+   </xsl:for-each>
+	}
+	
+	## Command
+	set command test_<xsl:value-of select="@name"/>
+	if {[llength $parameters]>0} {
+	   set command "test_verify_bit_file [join $parameters " "]"
+	}
+	
+	if {$testRunFatal==true} {
+	    ## In case of previous fatal error -> Fail strictly
+	    validationProcessReport addError "Test not run because of previous fatal error" $testReport
+	} elseif {[catch {set testResult [test_<xsl:value-of select="@name"/> [join $parameters]]} err]} {
+	    validationProcessReport addError $err $testReport
+	    set testRunSuccess false
+	    <xsl:if test="./@fatal='true'">
+	     ## If Fatal test, register error
+	    set testRunFatal true
+	    </xsl:if>
+	} else {
+	    #validationProcessReport addTestReportResult $testReport $testResult
+	}
+	puts "-------------"
 }
-puts "-------------"
 </xsl:template>
 
 
