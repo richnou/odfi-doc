@@ -64,10 +64,10 @@ require_once("framework/superdoc.php");
 	    	font-weight:  bold;
 	    }
 	    #menu-span {
-	    	position: fixed;
+	    	/*position: fixed;*/
 	    }
 	    #content-span {
-	    	margin-left: 500px;
+	    	/*margin-left: 500px;*/
 	    }
     
     </style>
@@ -77,10 +77,8 @@ require_once("framework/superdoc.php");
 
 	<script src="http://code.jquery.com/jquery-1.9.0.min.js"></script>
     <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="js/superdoc.js"></script>
    
-    
-    <!-- http://www.openjs.com/scripts/jx/ -->
-    <script src="jxs.js"></script>
     
     <!-- Init -->
 	<!-- ##### -->
@@ -136,11 +134,55 @@ require_once("framework/superdoc.php");
             <ul class="nav nav-list">
               <li class="nav-header">Modules</li>
               
-              <!-- link for this local doc -->
-              <li class="active"><a href="#">Scripts Manager</a></li>
+              <?php 
               
+              // Per default, show all top groups that are not hidden
+              //---------------------------
+              $groups = array();
              
+			  
+              // If there is a $_GET[group], then select only this group
+              if (!empty($_GET['group'])) {
+              	$groups[] = $docMap->getGroup($_GET['group']);
+              } else {
+					
+					foreach($docMap->getGroups() as $group) {
+						if ($group->hidden==false) {
+							$groups[] = $group;
+						}
+					}
+
+			  }
+			  
+              // Show
+              //---------------------------
+              function groupContent(DocGroup $group) {
+
+					echo "<li class=\"nav-header\">$group->name";
+					echo "<ul>";
+					// Show Documents
+					//-------------------
+					foreach ($group->getDocuments() as $document) {
+						echo "<li><a href=\"javascript:loadDocument('$document->documentFile')\">$document->name</a></li>";
+					}
+					
+					// Show Groups
+					//---------------------
+					foreach ($group->getGroups() as $subgroup) {
+						groupContent($subgroup);
+						//echo "<li><a href=\"#\">$document->name</a></li>";
+						//echo
+					}
+					echo "</ul>";
+					echo "</li>";
+			 }
               
+              foreach($groups as $group) {
+					groupContent($group);
+					
+			 }
+              
+              ?>
               
               
             </ul>
@@ -148,13 +190,16 @@ require_once("framework/superdoc.php");
         </div><!--/span-->
         
         <!-- Content -->
-        <div class="span9" id="content-span">
+        <div class="span3" id="content-span">
         
      
-        </div><!--/content span-->
-      </div><!--/row-->
+        </div>
+        <!--/content span-->
+        
+      </div>
+      <!--/row-->
 
-      <hr>
+    
 
       <footer>
         <p>&copy; SuperDoc 2013</p>

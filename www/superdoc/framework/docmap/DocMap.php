@@ -5,6 +5,14 @@ class DocMap {
 	protected $groups = array();
 	
 	
+	public function getGroup($name) {
+		//echo "Returning:  ".$this->groups[$name];
+		return $this->groups[$name];
+	}
+	
+	public function getGroups() {
+		return $this->groups;
+	}
 	
 	/**
 	 * Creates a new named group
@@ -21,7 +29,7 @@ class DocMap {
 	
 	public function addGroup(DocGroup $group) {
 		
-		$this->groups[] = $group;
+		$this->groups[$group->name] = $group;
 		
 	}
 	

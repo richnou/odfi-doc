@@ -1,0 +1,4 @@
+RewriteEngine On
+
+RewriteBase /superdoc/
+RewriteRule ^index.php/(.*)$ index.php?group=$1 [R]
