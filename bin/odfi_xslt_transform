@@ -1,0 +1,105 @@
+#!/usr/bin/env scala_script
+
+_SCALA_PRELOAD_
+#!/bin/bash
+
+## Manual Classpath here to simplify resolution form maven
+echo "/local/home/rleys/git/osi/dev-tools/repository/org/odfi/collaboration/docbook/docbook-core/1.2-SNAPSHOT/docbook-core-1.2-SNAPSHOT.jar"
+echo "/local/home/rleys/git/osi/dev-tools/repository/com/idyria/osi/java-utils/security-utils/1.2/security-utils-1.2.jar"
+echo "/local/home/rleys/git/osi/dev-tools/repository/junit/junit/4.5/junit-4.5.jar"
+echo "/local/home/rleys/git/osi/dev-tools/repository/bouncycastle/bcprov-jdk16/140/bcprov-jdk16-140.jar"
+echo "/local/home/rleys/git/osi/dev-tools/repository/com/idyria/osi/ooxoo/ooxoo-core/2.0/ooxoo-core-2.0.jar"
+echo "/local/home/rleys/git/osi/dev-tools/repository/com/jcraft/jsch/0.1.42/jsch-0.1.42.jar"
+echo "/local/home/rleys/git/osi/dev-tools/repository/javax/activation/activation/1.1/activation-1.1.jar"
+echo "/local/home/rleys/git/osi/dev-tools/repository/com/idyria/osi/java-utils/xml-utils/1.0.2/xml-utils-1.0.2.jar"
+echo "/local/home/rleys/git/osi/dev-tools/repository/com/saxonica/saxon/saxon-he/9/saxon-he-9.jar"
+echo "/local/home/rleys/git/osi/dev-tools/repository/com/idyria/osi/java-utils/tea/1.5-SNAPSHOT/tea-1.5-SNAPSHOT.jar"
+echo "/local/home/rleys/git/osi/dev-tools/repository/javax/mail/mail/1.4/mail-1.4.jar"
+
+
+
+
+_EOF_SCALA_PRELOAD_
+
+
+import java.util.logging._
+import java.io.File
+
+import org.odfi.collaboration.docbook.core._
+import scala.collection.JavaConversions._
+
+import com.idyria.utils.java.logging._
+import com.idyria.utils.java.os.OSDetector;
+import com.idyria.utils.java.os.OSDetector.OS;
+
+println("Welcome to XSLT transformation script")
+
+
+// Gather Data
+//------------------
+
+// Check input
+if (args.length<2) {
+	println("Not enough arguments:")
+	sys.exit
+}
+
+// Stylesheet
+var input = new File(args(0)).getAbsoluteFile()
+var stylesheet = args(1)
+
+
+println(s"Input XML: $input")
+println(s"Stylesheet id: $stylesheet")
+
+// base XML
+
+// List available Repositories
+//------------------------------------
+
+//-- Load ENV based repositories
+Logger.getLogger("com.idyria").setLevel(Level.SEVERE)
+Logger.getLogger("uni.hd.cag.ooxoo").setLevel(Level.SEVERE)
+TeaLogging.getLogger("uni.hd.cag.ooxoo").setLevel(Level.SEVERE)
+var loader = StylesheetsLoader.getInstance()
+loader.loadExternalRepositories()
+loader.loadRepository("file://"+sys.props("script.location")+"/../stylesheets/")
+
+//-- Show repositories
+loader.getRepositories.foreach {
+
+	r => println(s"-- Found Stylesheet Repository: ${r.getRepositoryURL()}");
+
+}
+
+//-- Show possible stylesheets
+loader.getPossibleStylesheetsArray.foreach{ s => println(s"Available stylesheet: $s ")}
+
+
+
+// Transform
+//------------------------------
+
+//-- Check Stylesheet
+var stylesheetAndRepository = loader.getStylesheet(stylesheet)
+if (stylesheetAndRepository == null) {
+	println("Stylesheet id does not exists, use --list to get an availability list")
+	sys.exit
+} else if (stylesheetAndRepository.getLeft() == null ) {
+	println("Repository was returned null")
+	sys.exit
+} else if (stylesheetAndRepository.getRight() == null ) {
+	println("Stylesheet was returned null")
+	sys.exit
+}
+
+
+//-- Build
+var rep = stylesheetAndRepository.getLeft()
+var st = stylesheetAndRepository.getRight()
+rep.transform(input,st)
+
+
+
+
+

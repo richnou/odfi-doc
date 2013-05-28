@@ -1,4 +1,9 @@
 RewriteEngine On
 
 RewriteBase /superdoc/
+
+
 RewriteRule ^index.php/(.*)$ index.php?group=$1 [R]
+
+
+RewriteRule ^(.+)/(.+\.md)$ index.php?group=$1&document=$2  [R]

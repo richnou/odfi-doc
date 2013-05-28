@@ -7,10 +7,13 @@
  */
 function isSVGImage($url) {
 	
-	if (preg_match("@^.*svg$@",$url[0])===FALSE)
+	error_log("SVG matching on ".$url);
+	if (preg_match("@.+\.svg@",$url)==0) {
+			
 		return false;
-	else
+	} else {	
 		return true;
+	}
 	
 }
 
@@ -37,7 +40,7 @@ function odfiExtrasListFolder($folder,$pattern,$basePath) {
  * @param unknown $file
  * @param unknown $section
  */
-function odfiSectionExtract($file,$section,$basePath) {
+function odfiSectionExtract($file,$section,$parse,$basePath) {
 	
 	
 	// Adapt file path if relative to basepath
@@ -46,27 +49,43 @@ function odfiSectionExtract($file,$section,$basePath) {
 		$file = $basePath.'/'.$file;
 	}
 	
-	error_log("Extracting from: $file, section $section, with base path: $basePath");
+	error_log("Extracting from: $file, section $section, parse: $parse, with base path: $basePath");
 	
 	
 	// Get Content trimmed
 	//-----------------
 	$matches = array();
-	$res = preg_match("/sect:\s*$section\s+(.*)eof-sect:\s*$section\s+/s",file_get_contents($file),$matches);
+	$res = preg_match("/\s*sect:\s*$section\s+(.*)eof-sect:\s*$section\s+/s",file_get_contents($file),$matches);
 	
 	$doc = $matches[1];
 	
-	// First character is the comment delimiter
-	//------------------
-	$commentChar = $doc[0];
-	error_log("Matching: $res, comment char: $commentChar");
 	
-	error_log("Doc: $doc");
 	
-	$doc = str_replace("$commentChar","",$doc);
+	// Parse?
+	//-----------------
+	if ($parse=="true") {
+		
+		// First character is the comment delimiter
+		//------------------
+		
+		$doc = implode("\n",array_map('trim',explode("\n",$doc)));
+		
+		
+		
+		$commentChar = $doc[0];
+		$doc = str_replace("$commentChar","",$doc);
+		
+		error_log("Clean Doc: $doc");
+		
+		$doc = Markdown($doc);
+		
+	} else {
+		
+		$doc = "<pre>$doc</pre>";
+		
+	}
 	
-	$doc = Markdown($doc);
-	error_log("Clean Doc: $doc");
+	//error_log("Clean Doc: $doc");
 	
 	if (preg_last_error() == PREG_NO_ERROR) {
 		error_log( 'There is no error');
@@ -97,6 +116,35 @@ function odfiSectionExtract($file,$section,$basePath) {
 	$DOM->loadHTML("<div>".$doc."</div>");
 	return $DOM;
 	
+	
+}
+/**
+ * Includes the content as a file in the output
+ * @param unknown $file
+ * @param unknown $basePath
+ */
+function odfiIncludeFile($file,$basePath) {
+
+	// Adapt file path if relative to basepath
+	//--------------------
+	if ($file[0]!='/') {
+		$file = $basePath.'/'.$file;
+	}
+	
+	//error_log("Including from: $file, with base path: $basePath");
+	
+	// Get Content trimmed
+	//-----------------
+	$content = file_get_contents($file);
+	
+	// Make some important replacements
+	//-----------
+	$content = htmlspecialchars($content);
+	
+
+	$DOM = new DOMDocument;
+	$DOM->loadHTML("<div>".$content."</div>");
+	return $DOM;
 	
 }
 
@@ -134,6 +182,8 @@ function transformChain($xml,$xsls = array( path =>  array())) {
 		
 		//-- transform
 		$xml = transform($xml,file_get_contents($xslt),$parameters);
+		
+		
 		
 		
 	}

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+
+location="$(dirname "$(readlink -f ${BASH_SOURCE[0]})")"
+
+CLASSPATH="$location/../external/yed/yed-3.10/vectorgraphics.jar:$CLASSPATH" java -jar $location/../external/yed/yed-3.10/yed.jar

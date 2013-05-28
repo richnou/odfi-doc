@@ -10,13 +10,15 @@ and not under the normal web path
 	
 	<xsl:param name="basePath"></xsl:param>
 
+	<!-- Extract Section -->
+	<!-- ############### -->
 	<xsl:template match="extractsection">
 		
 		
 <!-- 		<xsl:value-of select="php:function('odfiSectionExtract',string(@file),string(@name),$basePath)"></xsl:value-of> -->
 		
 		<div>
-		<xsl:copy-of select="php:function('odfiSectionExtract',string(@file),string(@name),$basePath)">
+		<xsl:copy-of select="php:function('odfiSectionExtract',string(@file),string(@name),string(@parse),$basePath)">
 			
 		</xsl:copy-of>
 		</div>
@@ -26,6 +28,24 @@ and not under the normal web path
 	
 	</xsl:template>
 	
+	
+	
+	<!-- Include a file -->
+	<!-- ############### -->
+	<xsl:template match="includefile">
+	
+		<pre>
+		<code>
+		
+		
+		<xsl:copy-of select="php:function('odfiIncludeFile',string(@path),$basePath)">
+			
+		</xsl:copy-of>
+		
+		</code>
+		</pre>
+	
+	</xsl:template>
 	
 	<!-- <listfolder path='' pattern='' />-->
 	<xsl:template match="listfolders">

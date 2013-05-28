@@ -16,6 +16,8 @@ class Document {
 	 */
 	public $documentFile = null;
 	
+	public $link = false;
+	
 	/**
 	 * Name of document. Name of the documentFile per default
 	 * @var unknown
@@ -27,6 +29,13 @@ class Document {
 		$this->name = basename($this->documentFile);
 	}
 	
+	/**
+	 * Return true if this document should be just jumped to
+	 */
+	function isLink() {
+		return $this->link;
+	}
+	
 	
 	/**
 	 * Returns HTML version
@@ -35,6 +44,8 @@ class Document {
 		
 		//-- Output XHTML
 		$xhtml = "<div>".Markdown(file_get_contents($this->documentFile))."</div>";
+		
+		error_log("markdown output:".substr( $xhtml, -500));
 		
 		//-- Parameters for images
 		$imagesParameters = array("basePath" => dirname($this->documentFile));

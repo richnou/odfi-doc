@@ -93,6 +93,8 @@ validationProcessReport setTester $odfi::common::argv_tester
 validationProcessReport setId $validationId
 if {$odfi::common::argv_testerSubjectID!=false} {
     validationProcessReport setTesterSubjectID $odfi::common::argv_testerSubjectID
+} else {
+	error "Not -testerSubjectID provided, this is required!"
 }
 
 #### Prepare test resume (resume argument saves which test the process last started, to allow interruption for non fully automatic steps)

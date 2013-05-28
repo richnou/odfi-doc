@@ -13,7 +13,7 @@ Sorry for the commented debugging code, feel free to clean things out.
 		
 		<div>
 			<!-- TOC -->
-			<div class="toc">Table of content</div>
+			<div class="toc">Table of contents</div>
 			<ul>
 					<xsl:for-each select="//h1">
 						<xsl:call-template name="toc-single-level">

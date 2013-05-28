@@ -15,7 +15,9 @@ if (empty($function)) {
 //--------------------------
 $functions = array(
 
-		"loadDocument" => 1
+		"loadDocument" => 1,
+		"loadImage" => 1,
+		"loadResource" => 1
 		
 );
 if (!array_key_exists($function,$functions)) {
@@ -44,15 +46,78 @@ function loadDocument() {
 	$res.= "<content id='$document->name' type='text/markdown'><![CDATA[".$document->toHTML()."]]></content>";
 	$res.="</contents>";
 	
-	error_log("Result: $res");
+	#error_log("Result: $res");
 	
-	//echo $res;
-	return $res;
+	echo $res;
+	//return $res;
 }
+
+//---- Load Image
+//---- $_GET[path]= path to document
+//-----------------------------
+function loadImage() {
+	
+	
+	// Get Image path
+	//-----------
+	$path = $_GET['path'];
+	
+	// Read to output
+	//---------------------
+	readfile($path);
+	
+}
+
+//---- Load Resource
+//---- $_GET[document]= path to document
+//-----------------------------
+function loadResource() {
+	
+	
+	// Get Image path
+	//-----------
+	$path = $_GET['path'];
+
+	// Content-types
+	//---------------------
+	$supportedTypes = array (
+
+		"@.+\.pdf$@" => "application/pdf"
+	);
+	$found=false;
+	foreach ($supportedTypes as $expression => $contentType) {
+		if(preg_match($expression, $path)==1) {
+			header("Content-Type: $path",true);
+			$found=true;
+			break;
+		}
+	}
+
+	// If Found, Fail, otherwise set attachment
+	//------------------
+	if (!$found) {
+		header('HTTP/1.1 500 Internal Server Error');
+		exit(-1);
+	} else {
+
+		//-- Name is last / path
+
+
+		header('Content-Disposition: attachment; filename="'.basename($path).'"');
+
+
+	}
+
+	// Read to output
+	//---------------------
+	readfile($path);
+	
+}
+
 
 // Call
 //-------------------
 $res = call_user_func($function);
-error_log("Result2: $res");
-echo $res;
+#error_log("Result2: $res");
+//echo $res;
 ?>
