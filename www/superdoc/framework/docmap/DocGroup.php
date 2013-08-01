@@ -18,7 +18,7 @@ class DocGroup {
 	 * Path of a folder where to find documentations
 	 * @var unknown
 	 */
-	public $docSource = null;
+	public $docSource = [];
 
 	/**
 	 * If true, the group will only be displayd on specific request
@@ -70,30 +70,38 @@ class DocGroup {
 	 */
 	function getGroups() {
 
-		//-- Scan
-		$files  = scandir($this->docSource);
-
-		//-- Filter Folders as Groups
 		$res = array();
-		foreach($files as $file) {
+		foreach ($this->docSource as $ds) {
 
-			//echo "File: $file";
+			//-- Scan
+			$files  = scandir($ds);
 
-			//-- Ignores ?
-			if ($this->pathIsIgnored($file))
-				continue;
+			//-- Filter Folders as Groups
+			foreach($files as $file) {
 
-			//-- Add ?
-			if ($file!=".." && $file != "." && $file != ".git" && is_dir($this->docSource.'/'.$file)) {
-				$group = new DocGroup((string)basename($file));
-				$group->docSource = $this->docSource.'/'.$file;
-				$res[] = $group;
+				//echo "File: $file";
+
+				//-- Ignores ?
+				if ($this->pathIsIgnored($file))
+					continue;
+
+				//-- Add ?
+				if ($file!=".." && $file != "." && $file != ".git" && is_dir($ds.'/'.$file)) {
+					$group = new DocGroup((string)basename($file));
+					$group->ignores = $this->ignores;
+					$group->docSource[] = $ds.'/'.$file;
+					$res[] = $group;
+				}
 			}
+
+			//print_r($res);
+
+
+
 		}
 
-		//print_r($res);
-
 		return $res;
+
 
 	}
 
@@ -104,29 +112,35 @@ class DocGroup {
 	 */
 	function getDocuments() {
 
+		foreach ($this->docSource as $ds) {
 
-		// Search Markdown
-		//------------------------
-		$docs = glob($this->docSource."/*.md");
+			// Search Markdown
+			//------------------------
+			$docs = glob($ds."/*.md");
 
-		//-- Convert to Document objects
-		$res = array();
-		foreach ($docs as $doc) {
-			$res[] = new Document((string)$doc);
+			//-- Convert to Document objects
+			$res = array();
+			foreach ($docs as $doc) {
+				$res[] = new Document((string)$doc);
+			}
+
+
+			// Search for index.html that will be seen as Jump Link
+			//---------------
+			$index = $ds."/index.html";
+			if (is_file($index)) {
+
+				$doc = new Document((string)$index);
+				$doc->link = true;
+				$res[] = $doc;
+
+
+			}
+
+
 		}
 
 
-		// Search for index.html that will be seen as Jump Link
-		//---------------
-		$index = $this->docSource."/index.html";
-		if (is_file($index)) {
-
-			$doc = new Document((string)$index);
-			$doc->link = true;
-			$res[] = $doc;
-
-
-		}
 
 		return $res;
 
