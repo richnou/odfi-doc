@@ -37,6 +37,7 @@ require_once("framework/superdoc.php");
 
     <style type="text/css">
 
+
     </style>
 
     <script type="text/javascript">
@@ -88,6 +89,12 @@ require_once("framework/superdoc.php");
         h4,h5,h6 {
             font-size: 11pt;
             margin-left: 30pt;
+        }
+
+        .nav-header {
+            padding: 5px;
+            text-transform: none;
+
         }
 
     </style>

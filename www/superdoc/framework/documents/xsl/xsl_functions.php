@@ -17,6 +17,16 @@ function isSVGImage($url) {
 	
 }
 
+function fileExists ($path) {
+
+	//error_log("file exists on ".$path." -> ".file_exists($path));
+	if (file_exists($path)==1) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 
 /**
  * Lists the folders in given folder, matching the provided pattern

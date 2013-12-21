@@ -6,7 +6,11 @@ function loadDocument(documentPath) {
 			
 			$.get(url,function(responseContent,statusTxt,xhr) {
 
+				console.log("Loading done: "+statusTxt);
+
 			    if(statusTxt=="success") {
+
+			    	
 
 					//-- Clear doc content
 					var docContent = $("#content-span");
@@ -89,7 +93,7 @@ function loadDocument(documentPath) {
 	  	 			});
 					
 			
-			    }
+			    } 
 			    if(statusTxt=="error")
 			        alert("Error: "+xhr.status+": "+xhr.statusText);
 		    });

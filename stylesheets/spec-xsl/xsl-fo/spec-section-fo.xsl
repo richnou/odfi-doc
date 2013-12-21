@@ -157,67 +157,86 @@
      -->
      <xsl:template match="docbook:table" mode="content">
             
-     	
+     	<fo:table-and-caption>
+
      		<!-- Caption? -->
 			<!-- ######## -->
-<!-- 			<xsl:if test="./docbook:caption"> -->
-<!-- 				<fo:table-caption> -->
-<!-- 					<fo:block> -->
-<!-- 						<xsl:value-of select="./docbook:caption/text()"></xsl:value-of> -->
-<!-- 					</fo:block> -->
-<!-- 				</fo:table-caption> -->
-<!-- 			</xsl:if> -->
+			<xsl:if test="./docbook:caption">
+				<fo:table-caption>
+ 					<fo:block> 
+ 						<xsl:value-of select="./docbook:caption/text()"></xsl:value-of> 
+ 					</fo:block> 
+ 				</fo:table-caption>
+ 			</xsl:if> 
      	
      		<!-- Table -->
      		<!-- ##### -->
 			<fo:table xsl:use-attribute-sets="table-margin-attributes table-border-style">
 
-                <xsl:call-template name="preserve-attributes"></xsl:call-template>
-
-				<!-- #### Styling -->
-				
-				<!-- Layout -->
-				<xsl:attribute name="table-layout">fixed</xsl:attribute>
-				<xsl:attribute name="width">100%</xsl:attribute>
-		
-				
-				<!-- Border -->
-				<xsl:attribute name="border-collapse">collapse</xsl:attribute>
-				
-				<!-- Spacing (att set) -->
-			
-				<!-- #### Header -->
-				<xsl:if test="./docbook:thead">
-					<fo:table-header>
-						<xsl:call-template name="table-rowcell">
-							<xsl:with-param name="base" select="./docbook:thead"></xsl:with-param>
-						</xsl:call-template>
-					</fo:table-header>
-				</xsl:if>
-				
-				<!-- #### Footer -->
-                <xsl:if test="docbook:tfoot">
-                    <fo:table-footer>
-                        <xsl:call-template name="table-rowcell">
-                            <xsl:with-param name="base" select="docbook:tfoot"></xsl:with-param>
-                        </xsl:call-template>
-                    </fo:table-footer>
+                <!-- #### Caption -->
+                <!-- <xsl:if test="./docbook:caption">
+                    <fo:table-caption>
+                      <fo:block>
+                        <xsl:value-of select="./docbook:caption/text()"></xsl:value-of> 
+                        </fo:block> 
+                    </fo:table-caption> 
                 </xsl:if>
-				
-				<!-- #### Body -->
-				<xsl:if test="./docbook:tbody">
-					<fo:table-body>
-						<xsl:call-template name="table-rowcell">
-							<xsl:with-param name="base" select="./docbook:tbody"></xsl:with-param>
-						</xsl:call-template>
-					</fo:table-body>
-				</xsl:if>
-				
-				
-			
-			</fo:table>
+                -->
 
-			
+
+                    <xsl:call-template name="preserve-attributes"></xsl:call-template>
+
+    				<!-- #### Styling -->
+    				
+    				<!-- Layout -->
+    				<xsl:attribute name="table-layout">fixed</xsl:attribute>
+    				<xsl:attribute name="width">100%</xsl:attribute>
+    		
+    				
+    				<!-- Border -->
+    				<xsl:attribute name="border-collapse">collapse</xsl:attribute>
+    				
+    				<!-- Spacing (att set) -->
+    			
+                    
+
+    				<!-- #### Header -->
+    				<xsl:if test="./docbook:thead">
+    					<fo:table-header>
+    						<xsl:call-template name="table-rowcell">
+    							<xsl:with-param name="base" select="./docbook:thead"></xsl:with-param>
+    						</xsl:call-template>
+    					</fo:table-header>
+    				</xsl:if>
+    				
+    				<!-- #### Footer -->
+                    <xsl:if test="docbook:tfoot">
+                        <fo:table-footer>
+                            <xsl:call-template name="table-rowcell">
+                                <xsl:with-param name="base" select="docbook:tfoot"></xsl:with-param>
+                            </xsl:call-template>
+                        </fo:table-footer>
+                    </xsl:if>
+    				
+    				<!-- #### Body -->
+    				<xsl:if test="./docbook:tbody">
+    					<fo:table-body>
+    						<xsl:call-template name="table-rowcell">
+    							<xsl:with-param name="base" select="./docbook:tbody"></xsl:with-param>
+    						</xsl:call-template>
+    					</fo:table-body>
+    				</xsl:if>
+				
+				</fo:table>
+			     
+                <!--<xsl:if test="./docbook:caption">
+                      <fo:block>
+                        <xsl:value-of select="./docbook:caption/text()"></xsl:value-of> 
+                      </fo:block> 
+                </xsl:if>-->
+	
+
+		</fo:table-and-caption>	
 
         
         
