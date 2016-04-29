@@ -1,0 +1,11 @@
+#!/usr/bin/env tclsh8.6
+
+
+odfi::tool::describe {
+
+    description "Super Doc 2 Generates or serves static webpages from Nice TCL syntax"
+
+
+}
+
+puts "Welcome to superdoc 2"

@@ -1,0 +1,72 @@
+#!/usr/bin/env tclsh8.6
+
+package require odfi::tool 2.0.0
+package require odfi::git
+
+odfi::tool::describe {
+
+
+    description "This tool helps creating a default standard Module Website, and commit it to a gh-pages branch to be pushed to github"
+    argument producer optional type string description "If defined, specify which producer will be used"
+
+    argument serve optional "Starts Jekkyll with a URL path that will be the one used once online on github"
+
+    argument merge-master optional "Merge master template from collaboration doc branch"
+
+}
+tool parseArguments
+
+#########################
+## Module Informations 
+#########################
+puts "Origin: [odfi::git::originURL .]"
+regexp {.*/([\w_-]+)\.git} [odfi::git::originURL .] -> moduleID
+
+set collaborationRemote             "http://lebleu/gitlab/odfi/odfi-collaboration-doc.git"
+set collaborationJekyllMasterBranch "jekyll-master"
+
+#################
+## Check gh-pages branch exists
+###################
+puts "-- Checking a gh-pages exist on the remote or locally"
+
+set remote-gh-pages [lsearch -exact [odfi::git::list-remote-branches .] "gh-pages"]
+set local-branches [odfi::git::list-local-branches .]
+set local-gh-pages [lsearch -exact ${local-branches} "gh-pages"]
+puts "Local branches: ${local-branches}"
+puts "Remote branches: ${remote-gh-pages}"
+
+
+
+
+######################
+## Tool Commands 
+######################
+
+
+if {${merge-master}} {
+
+    puts "Merging Jekyll master layout"
+
+    catch { exec git remote remove tmp}
+    catch {exec git remote add -f tmp $collaborationRemote}
+    
+    try {
+
+    exec git pull tmp $collaborationJekyllMasterBranch
+    } on error {res resOptions} {
+
+    } finally {
+        exec git remote remove tmp
+    }
+
+}
+
+if {$serve} {
+    
+    puts "Serving Using Jekyll, module id: $moduleID"
+    set command [list jekyll serve -b /$moduleID --watch]
+    puts "Calling command: $command"
+    
+    odfi::common::execCommand $command
+}

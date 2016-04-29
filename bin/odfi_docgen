@@ -1,0 +1,19 @@
+#!/bin/bash
+
+dir="$(dirname "$(readlink -f ${BASH_SOURCE[0]})")"
+
+if [[ -f $dir/docgen.jar ]]
+then
+    java -cp $dir/docgen.jar org.odfi.collaboration.main.DocGen $*
+else
+
+    mvn -q -f $dir/../sw/docgen/pom.xml exec:java  \
+                -Dexec.classpathScope="test" \
+                -Dexec.includePluginDependencies=true \
+                -Dmaven.test.skip=true \
+                -DskipTests=true \
+                -Dexec.mainClass=org.odfi.collaboration.main.DocGen \
+                -Dexec.args="$*" 
+
+fi
+
