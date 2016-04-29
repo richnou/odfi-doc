@@ -97,6 +97,11 @@ require_once("framework/superdoc.php");
 
         }
 
+        img {
+            margin-left:  auto;
+            margin-right: auto;
+        }
+
     </style>
 
 </head>

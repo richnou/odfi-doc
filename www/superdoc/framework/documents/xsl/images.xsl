@@ -91,7 +91,7 @@ and not under the normal web path
 
 					<xsl:apply-templates select="@*"></xsl:apply-templates>
 
-					<xsl:attribute name="href">/superdoc/rest/api.php?function=loadResource&amp;path=$fullPath</xsl:attribute>
+					<xsl:attribute name="href">/superdoc/rest/api.php?function=loadResource&amp;path=<xsl:value-of select="$fullPath"/></xsl:attribute>
 					<xsl:attribute name="target">_blank</xsl:attribute>
 
 					<xsl:apply-templates select="node()"></xsl:apply-templates>
