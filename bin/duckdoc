@@ -1,0 +1,134 @@
+#!/usr/bin/env tclsh
+
+package require odfi::duckdoc 1.0.0
+
+
+
+puts "    ____             __   ____            ";
+puts "   / __ \\__  _______/ /__/ __ \\____  _____";
+puts "  / / / / / / / ___/ //_/ / / / __ \\/ ___/";
+puts " / /_/ / /_/ / /__/ ,< / /_/ / /_/ / /__  ";
+puts "/_____/\\__,_/\\___/_/\|_/_____/\\____/\\___/  ";
+puts "                                          ";
+
+set folder [file normalize [lindex $argv 0]]
+puts "-- Running From Folder: $folder"
+
+if {![file exists $folder]} {
+    puts "-- Folder does not exist"
+}
+
+namespace eval mytest {
+    odfi::log::info "test no to be seen"
+}
+
+
+
+
+## Serve
+####################
+set serving false
+set servePort 8888
+
+if {[lsearch -exact $argv --serve]!=-1} {
+    set serving true
+}
+
+if {[lsearch -exact $argv --port ]!=-1} {
+    set servePort [lindex $argv [expr [lsearch -exact $argv --port] +1]]
+    if {![string is integer $servePort]} {
+        puts "-- Wrong port definition: --port portInteger"
+        exit
+    }
+}
+
+
+if {$serving} {
+    package require odfi::ewww 1.0.0
+    odfi::ewww::Httpd serveHttpd $servePort
+    
+    puts "-- Serving from: http://localhost:$servePort"
+}
+
+
+
+## Create Site
+##########
+set site [odfi::duckdoc::site $folder]
+
+## Gather
+#################
+$site gather
+
+
+
+
+## Generate
+##############
+
+## Init 
+[$site shade ::odfi::duckdoc::Template children] foreach {
+    $it initTemplate $site
+
+}
+
+## Geneate
+[$site shade ::odfi::duckdoc::Template children] foreach {
+    $it @> toHTML [$site outputFolder get]/
+}
+
+
+## Start Serving
+if {$serving} {
+
+    ## Change Prefix and regenerate to serving out
+    [$site shade ::odfi::duckdoc::Template children] foreach {
+    
+        ## Change for serving
+        $it addResourceServingPrefix "/[$it name get]/"
+    
+        ## Rewrite output to serving folder
+        $it @> toHTML [$site outputFolder get]/_serve/
+    
+        ## Add Actions
+        serveHttpd addHandler [::new odfi::ewww::APIHandler #auto "/[$it name get]/serve-actions/"  {
+          
+            "/stop" {
+               puts "Stopping"
+               set ::stop true
+            } 
+        
+            "/regenerate" {
+                           
+           
+               ## Regather
+               $site cleanPages
+               $site gather
+   
+               ## Regenerate
+               [$::site shade ::odfi::duckdoc::Template children] foreach {
+                    $it reInit $::site
+                    $it addResourceServingPrefix "/[$it name get]/"
+                    $it @> toHTML [$::site outputFolder get]/
+                    $it @> toHTML [$::site outputFolder get]/_serve/
+           
+       
+                }
+                   
+            }
+                      
+        }]
+       
+       ## Service Files
+       serveHttpd addHandler [::new odfi::ewww::FSHandler #auto "/[$it name get]/[$::site sitePath get]/" [$site outputFolder get]/_serve/[$it outputBase get]/ {
+              
+       }]
+   }
+   
+    ## Start
+    serveHttpd start
+    
+    vwait stop
+    catch {odfi::common::deleteObject serveHttpd}
+}
+#$site @> getTemplate default @> toHTML $folder/_out/index.html
