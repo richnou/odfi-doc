@@ -27,10 +27,11 @@ odfi::language::nx::new ::odfi::duckdoc {
             set :contentFolder ${:baseFolder}
             set :outputFolder ${:baseFolder}/_out
             
-            ## Source site.duckdoc
-            if {[file exists ${:baseFolder}/site.duckdoc]} {
-                source  ${:baseFolder}/site.duckdoc
+            ## Source *site.duckdoc
+            foreach siteFile [glob -nocomplain -types f ${:baseFolder}/*site.duckdoc] {
+                source  $siteFile
             }
+           
             
         }
         

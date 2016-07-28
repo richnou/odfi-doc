@@ -11,6 +11,8 @@ puts " / /_/ / /_/ / /__/ ,< / /_/ / /_/ / /__  ";
 puts "/_____/\\__,_/\\___/_/\|_/_____/\\____/\\___/  ";
 puts "                                          ";
 
+set duckDocLocation [file normalize [file dirname [info script]]/../]
+
 set folder [file normalize [lindex $argv 0]]
 puts "-- Running From Folder: $folder"
 
@@ -30,100 +32,131 @@ namespace eval mytest {
 set serving false
 set servePort 8888
 
-if {[lsearch -exact $argv --serve]!=-1} {
+set serveIndex [lsearch -exact $argv --serve]
+if {$serveIndex!=-1} {
     set serving true
+    set argv [lreplace $argv $serveIndex $serveIndex]
+    
 }
 
-if {[lsearch -exact $argv --port ]!=-1} {
-    set servePort [lindex $argv [expr [lsearch -exact $argv --port] +1]]
+set servePortIndex [lsearch -exact $argv --port]
+if {$servePortIndex!=-1} {
+    set servePort [lindex $argv [expr $servePortIndex +1]]
+    set argv [lreplace $argv $servePortIndex [expr $servePortIndex +1 ]]
     if {![string is integer $servePort]} {
         puts "-- Wrong port definition: --port portInteger"
         exit
     }
 }
 
+## SetupConfig UI
+##############
 
 if {$serving} {
-    package require odfi::ewww 1.0.0
+    package require odfi::ewww 2.0.0
+   # package require odfi::ewww::webdata 2.0.0
+    
     odfi::ewww::Httpd serveHttpd $servePort
     
     puts "-- Serving from: http://localhost:$servePort"
+    
+    #set duckdocApp [new odfi::ewww::webdata::WebdataApplication #auto / {}]
+    #serveHttpd addHandler $duckdocApp
+    
+    #$duckdocApp configure applicationPath $duckDocLocation/tcl/duckdoc-1.x/configui/
+    
 }
 
 
 
-## Create Site
+## Create Sites
 ##########
-set site [odfi::duckdoc::site $folder]
+foreach siteFolder $argv {
+    odfi::common::println "-- Creating Site at: $siteFolder"
+    odfi::common::printlnIndent
+   
+   
+    ## Create object
+    set site [odfi::duckdoc::site $siteFolder]
+    
+    ## Gather
+    #################
+    $site gather
+    
+    ## Init 
+    [$site shade ::odfi::duckdoc::Template children] foreach {
+        $it initTemplate $site
+    
+    }
+    
+    ## Geneate
+    [$site shade ::odfi::duckdoc::Template children] foreach {
+        $it @> toHTML [$site outputFolder get]/
+    }
+    
+    ## Generate for serving output
+    if {$serving} {
+    
+        ## Change Prefix and regenerate to serving out
+        [$site shade ::odfi::duckdoc::Template children] foreach {
+        
+            odfi::common::println "-- Generating Site to be served for template: [$it name get]"
+        
+            ## Change for serving
+            $it addResourceServingPrefix "/[$it name get]/"
+        
+            ## Rewrite output to serving folder
+            $it @> toHTML [$site outputFolder get]/_serve/
+        
+            ## Add Actions
+            serveHttpd addHandler [::new odfi::ewww::APIHandler #auto "/[$it name get]/serve-actions/"  {
+              
+                "/stop" {
+                   puts "Stopping"
+                   set ::stop true
+                } 
+            
+                "/regenerate" {
+                               
+               
+                   ## Regather
+                   $site cleanPages
+                   $site gather
+       
+                   ## Regenerate
+                   [$::site shade ::odfi::duckdoc::Template children] foreach {
+                        $it reInit $::site
+                        $it addResourceServingPrefix "/[$it name get]/"
+                        $it @> toHTML [$::site outputFolder get]/
+                        $it @> toHTML [$::site outputFolder get]/_serve/
+               
+           
+                    }
+                       
+                }
+                          
+            }]
+           
+           ## Service Files
+           serveHttpd addHandler [::new odfi::ewww::FSHandler #auto "/[$it name get]/[$::site sitePath get]/" [$site outputFolder get]/_serve/[$it outputBase get]/ {
+                  
+           }]
+           
+           odfi::common::println "-- Serving site [$::site siteName get] template [$it name get] from : http://localhost:$servePort/[$it name get]/[$::site sitePath get]/"
+       }
+    
+    
+    }
+    
+    odfi::common::printlnOutdent
 
-## Gather
-#################
-$site gather
-
-
-
-
-## Generate
-##############
-
-## Init 
-[$site shade ::odfi::duckdoc::Template children] foreach {
-    $it initTemplate $site
-
-}
-
-## Geneate
-[$site shade ::odfi::duckdoc::Template children] foreach {
-    $it @> toHTML [$site outputFolder get]/
 }
 
 
 ## Start Serving
 if {$serving} {
 
-    ## Change Prefix and regenerate to serving out
-    [$site shade ::odfi::duckdoc::Template children] foreach {
     
-        ## Change for serving
-        $it addResourceServingPrefix "/[$it name get]/"
-    
-        ## Rewrite output to serving folder
-        $it @> toHTML [$site outputFolder get]/_serve/
-    
-        ## Add Actions
-        serveHttpd addHandler [::new odfi::ewww::APIHandler #auto "/[$it name get]/serve-actions/"  {
-          
-            "/stop" {
-               puts "Stopping"
-               set ::stop true
-            } 
-        
-            "/regenerate" {
-                           
-           
-               ## Regather
-               $site cleanPages
-               $site gather
-   
-               ## Regenerate
-               [$::site shade ::odfi::duckdoc::Template children] foreach {
-                    $it reInit $::site
-                    $it addResourceServingPrefix "/[$it name get]/"
-                    $it @> toHTML [$::site outputFolder get]/
-                    $it @> toHTML [$::site outputFolder get]/_serve/
-           
-       
-                }
-                   
-            }
-                      
-        }]
-       
-       ## Service Files
-       serveHttpd addHandler [::new odfi::ewww::FSHandler #auto "/[$it name get]/[$::site sitePath get]/" [$site outputFolder get]/_serve/[$it outputBase get]/ {
-              
-       }]
-   }
    
     ## Start
     serveHttpd start
