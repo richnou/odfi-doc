@@ -13,6 +13,15 @@ puts "                                          ";
 
 set duckDocLocation [file normalize [file dirname [info script]]/../]
 
+## Fetch Arguments
+#################
+
+
+## infos
+if { [lsearch -exact $argv --info]!=-1} {
+    puts "Welcome to DuckDoc"
+    exit
+}
 set folder [file normalize [lindex $argv 0]]
 puts "-- Running From Folder: $folder"
 
