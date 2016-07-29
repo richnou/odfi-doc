@@ -1,0 +1,15 @@
+
+## Parameters
+set :siteName "DuckDoc "
+set :sitePath "/odfi-doc"
+:attribute ::odfi::common github https://github.com/richnou/odfi-doc
+
+## Add Template
+package require odfi::duckdoc::templates::odfi
+:odfi:common default {
+}
+
+
+## Content And Output
+set :contentFolder [file dirname [info script]]/
+set :outputFolder [file dirname [info script]]
