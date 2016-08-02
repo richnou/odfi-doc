@@ -1,6 +1,5 @@
 package provide odfi::duckdoc 1.0.0
 package require odfi::language::nx 1.0.0
-package require odfi::ewww::html    2.0.0
 package require odfi::richstream 3.0.0
 package require odfi::attributes 2.0.0
 
@@ -240,14 +239,17 @@ odfi::language::nx::new ::odfi::duckdoc {
         ## template set and get
         ##############################
         
-        :template : ::odfi::ewww::html::HTMLNode name {
-            +mixin ::odfi::ewww::html::HtmlBuilder
+        :template name {
+            #+mixin ::odfi::ewww::html::HtmlBuilder
             
             +var templateReady false
             
             +var outputBase ""
             
             +builder {
+                package require odfi::ewww::html    2.0.0
+                :object mixins add ::odfi::ewww::html::HTMLNode
+                :object mixins add ::odfi::ewww::html::HtmlBuilder
                 set :outputBase ${:name}
                 :registerEventPoint addServePrefix prefix
             }
