@@ -27,7 +27,7 @@ odfi::language::nx::new ::odfi::duckdoc {
             set :outputFolder ${:baseFolder}/_out
             
             ## Source *site.duckdoc
-            foreach siteFile [glob -nocomplain -types f ${:baseFolder}/*site.duckdoc] {
+            foreach siteFile [glob -nocomplain -types f ${:baseFolder}/*site.tcl] {
                 source  $siteFile
             }
            
@@ -60,6 +60,7 @@ odfi::language::nx::new ::odfi::duckdoc {
         
             set results {}
             set processList [list ${:contentFolder} [current object]]
+
             while {[llength $processList]>0} {
                 set currentFolder [lindex $processList 0]
                 set currentParent [lindex $processList 1]
@@ -67,6 +68,9 @@ odfi::language::nx::new ::odfi::duckdoc {
                 
                 ## Create Group for Folder
                 ###########
+                if {[string match ${:outputFolder}* $currentFolder]} {
+                    continue
+                }
                 puts "Created Group: $currentFolder"
                 set group [$currentParent group $currentFolder ]
                 
@@ -161,8 +165,8 @@ odfi::language::nx::new ::odfi::duckdoc {
                 
                     ## Set Some Defaults
                     ##########
-                    
-                    set site [[:getPrimaryParents] @> at 0]
+                    set site [:findParentInPrimaryLine { $it isClass ::odfi::duckdoc::Site}]
+                    #set site [[:getPrimaryParents] @> at 0]
                     
                     #set :path [odfi::common::relativePath [[:parent] folder get] $path]
                     set :filePath ${:path}
@@ -261,11 +265,13 @@ odfi::language::nx::new ::odfi::duckdoc {
             +method applyTargetPathPrefix prefix {
                 
                 set urlRegexp {^\/[\w].*}
+
+                puts "Applying prefix $prefix"
                 
                 ## Global Scripts and Stylesheets
                 :shade ::odfi::ewww::html::Script walkDepthFirstPreorder {
                     
-                    #puts "Updating Script Prefix"
+                    #puts "Updating Script Prefix from [$node getAttribute src]"
                     if {[$node getAttribute src]!="" && [regexp $urlRegexp [$node getAttribute src]]} {
                         $node @ src $prefix/[$node getAttribute src]
                     }
@@ -349,7 +355,7 @@ odfi::language::nx::new ::odfi::duckdoc {
                     
                     ## Set Site target path mapping
                     if {[$site sitePath get]!="/"} {
-                        :applyTargetPathPrefix [$site sitePath get]
+                        #:applyTargetPathPrefix [$site sitePath get]
                     }
                 }
                 next
