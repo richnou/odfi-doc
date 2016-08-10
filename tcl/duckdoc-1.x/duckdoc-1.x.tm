@@ -172,16 +172,16 @@ odfi::language::nx::new ::odfi::duckdoc {
                     set :filePath ${:path}
                     set :pageName [file tail ${:path}]
                     set :shortName [file tail ${:path}]
-                    set :path [string map [list [$site contentFolder get] ""] ${:path}]
+                    set :path [string map [list [$site contentFolder get] "" ] ${:path} ]
+                    
                     puts "Created MD: ${:path} -> [llength [split ${:path} /]]"
                     
                     ## Parse Page Content
                     ##########
                     
-                    ## Replace NX ":" calls with <% %> surrounding
+                    
                     set :content [odfi::files::readFileContent ${:filePath}]
-                    #regsub -all -line {^\s*:[^\{\}\n]+(?:\{((?:[^\{\}]|\{[^\}]*\})*)\})?} $realContent {<% \0 %>} :content
-                    #regsub -all -line {^\s*:[^\{\}\n]+$} ${:content} {<% & %>} :content
+                   
                                     
                     #puts "sub content: "
                     #puts ${:content}
