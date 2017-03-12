@@ -107,7 +107,10 @@ odfi::language::nx::new ::odfi::duckdoc::templates::odfi {
                         
                         ## Main Pages
                         set topContainer [$site shade ::odfi::duckdoc::Group firstChild]
+                        #$topContainer walk
                         set containerClosure {
+                        
+                            puts "Doing element: $it"
                             if {[$it isClass ::odfi::duckdoc::Page]} {
                                 :div {
                                     :classes "item"
@@ -124,8 +127,8 @@ odfi::language::nx::new ::odfi::duckdoc::templates::odfi {
                                     :div {
                                         :classes "menu"
                                         
-                                        set group $it 
-                                        $group eachChild $containerClosure
+                                        #set group $it 
+                                        $it eachChild $lambda
                                        
                                     }
                                 }
@@ -133,7 +136,11 @@ odfi::language::nx::new ::odfi::duckdoc::templates::odfi {
                             }
                             
                         }
-                        $topContainer  eachChild $containerClosure
+                        odfi::closures::withITCLLambda $containerClosure  0 {
+                            $topContainer  eachChild $lambda
+                        }
+                        #set CCLambda  [odfi::closures::withITCLLambda $cl 0 $containerClosure]
+                        #$topContainer  eachChild $CCLambda
                     }
                     
                     ## Body 
@@ -158,13 +165,13 @@ odfi::language::nx::new ::odfi::duckdoc::templates::odfi {
         
         }
         
-        +method renderPage page {
+        +method renderPage {site page} {
              
             #:resourcePath /semantic
             set template [current object]
             
             #puts "TTE: ${:titleTextElement} -> [$page info class]"
-            ${:titleTextElement} content set "${:siteName} :: [$page pageName get]"
+            ${:titleTextElement} content set "[$site siteName get] :: [$page pageName get]"
             
             set pageContent [$page toHTML]
             #puts "Page content: $pageContent"

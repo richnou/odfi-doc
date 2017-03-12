@@ -17,7 +17,8 @@ odfi::language::nx::new ::odfi::duckdoc {
         +var contentFolder ""
         +var outputFolder ""
         +var siteName "default"
-        +var sitePath "/"
+        +var sitePath "/default"
+        +var fileMonitor ""
         
         +builder {
         
@@ -25,11 +26,39 @@ odfi::language::nx::new ::odfi::duckdoc {
             set :baseFolder [file normalize ${:baseFolder}]
             set :contentFolder ${:baseFolder}
             set :outputFolder ${:baseFolder}/_out
+            set :siteName [file tail  [file normalize ${:baseFolder}/../]]
+            set :sitePath ${:siteName}
             
             ## Source *site.duckdoc
-            foreach siteFile [glob -nocomplain -types f ${:baseFolder}/*site.tcl] {
+            foreach siteFile [glob -nocomplain -types f -directory ${:baseFolder} *site.tcl] {
                 source  $siteFile
             }
+            
+            ## File Moniroting
+            ## Update file content, remove and add pages
+            :registerEventPoint fileModified f
+            set :fileMonitor [::odfi::files::newFileMonitor [current object] {} {
+                    
+                    ## Relative path
+                    set relativePath [string map [list [${:target} contentFolder get]/ "" ] $f ]
+                    puts "A file has an updated content: $f -> $relativePath -> [split $relativePath /]"
+                    
+                    ## Find Child
+                    set child [[${:target} shade ::odfi::duckdoc::Group firstChild] findInSubTreeAlongPath name [split $relativePath /]]
+                    if {$child!=""} {
+                        
+                        if {![file exists $f]} {
+                            $child detach
+                        } else {
+                            puts "updating content"
+                            $child updateContent
+                        }
+                    }
+                    #${:target} findChild
+                    
+                    ${:target} callFileModified $f
+            
+            }]
            
             
         }
@@ -54,6 +83,13 @@ odfi::language::nx::new ::odfi::duckdoc {
         ###################
         ## Run
         ##################
+    
+        +method startFileMonitorWith eventClosure {
+        
+            ${:fileMonitor} start 
+            
+            :onFileModified $eventClosure
+        }
         
         ## Get the documents
         +method gather args {
@@ -89,7 +125,11 @@ odfi::language::nx::new ::odfi::duckdoc {
                 ###################
                 set mdDocs [glob -nocomplain -directory $currentFolder -types f -- *.md]
                 foreach mdDoc $mdDocs {
+                
                     puts "Found: $mdDoc"
+                    
+                    ${:fileMonitor} addFiles $mdDoc
+                    
                     $group markdownFile $mdDoc {
                     
                     }
@@ -98,7 +138,8 @@ odfi::language::nx::new ::odfi::duckdoc {
                 ## Remove if empty
                 #############
                 if {[$group shade ::odfi::duckdoc::Page isEmpty]} {
-                    $group detach
+                    puts "Removed Group: $currentFolder"
+                    #$group detach
                 }
             }
            
@@ -162,34 +203,39 @@ odfi::language::nx::new ::odfi::duckdoc {
                 +var filePath ""
                 
                 +builder  {
-                
+                    next
+                    
                     ## Set Some Defaults
                     ##########
                     set site [:findParentInPrimaryLine { $it isClass ::odfi::duckdoc::Site}]
                     #set site [[:getPrimaryParents] @> at 0]
                     
                     #set :path [odfi::common::relativePath [[:parent] folder get] $path]
-                    set :filePath ${:path}
-                    set :pageName [file tail ${:path}]
-                    set :shortName [file tail ${:path}]
-                    set :path [string map [list [$site contentFolder get] "" ] ${:path} ]
+                    set :filePath   ${:path}
+                    set :name       [file tail ${:path}]
+                    set :pageName   [file tail ${:path}]
+                    set :shortName  [file tail ${:path}]
+                    set :path       [string map [list [[:getSite] contentFolder get] "" ] ${:path} ]
                     
-                    puts "Created MD: ${:path} -> [llength [split ${:path} /]]"
+                    #puts "Created MD: ${:path} -> [llength [split ${:path} /]]"
                     
-                    ## Parse Page Content
-                    ##########
-                    
-                    
-                    set :content [odfi::files::readFileContent ${:filePath}]
                    
-                                    
-                    #puts "sub content: "
-                    #puts ${:content}
+                    :updateContent
                     
-                    ## Parse Content
+                   
+                }
+                
+                +method getSite args {
+                    return [:findParentInPrimaryLine { $it isClass ::odfi::duckdoc::Site}]
+                }
+                
+                +method updateContent args {
+                
+                    ## Read Page Content
+                    ##########       
+                    set :content [odfi::files::readFileContent ${:filePath}]
                     set :content [odfi::richstream::template::stringToString ${:content}]
                     
-                    next
                 }
                 
                 +method getPathDepth args {
@@ -212,6 +258,12 @@ odfi::language::nx::new ::odfi::duckdoc {
                 
                 +method toHTML args {
                     
+                    ## Read Page Content
+                    ##########       
+                    #set :content [odfi::files::readFileContent ${:filePath}]
+                    #set :content [odfi::richstream::template::stringToString ${:content}]
+                    
+                    #::puts "COnverting:  ${:content}"
                     return [::Markdown::convert ${:content}]
                 }
                 
@@ -370,6 +422,7 @@ odfi::language::nx::new ::odfi::duckdoc {
             +method toHTML {targetFolder {extraPath ""}} {
                 
                 puts "HTML Output"
+                
                 ## Create Output Dir
                 #####################
                 #set containingFolder [file dirname  $targetFile]
@@ -395,11 +448,12 @@ odfi::language::nx::new ::odfi::duckdoc {
                 $site shade ::odfi::duckdoc::Page walkDepthFirstPreorder {
                     
                     ## Render
-                    #puts "Found page: [$node info class]"
-                    set rendered [$template renderPage $node]
+                    set targetPath $targetFolder/[$node getHtmlName]
+                    
+                    puts "Found page: [$node info class] -> $targetPath"
+                    set rendered [$template renderPage $site $node]
                     
                     ## Target Path
-                    set targetPath $targetFolder/[$node getHtmlName]
                     file mkdir [file dirname  $targetPath]
                     $rendered toString $targetPath
                     
@@ -437,6 +491,27 @@ odfi::language::nx::new ::odfi::duckdoc {
        }
         
         
+    }
+
+}
+
+odfi::language::nx::new ::odfi::duckdoc::html {
+
+    :markdown : ::odfi::ewww::html::HTMLNode content {
+        +exportTo ::odfi::ewww::html::HTMLNode
+        
+        +builder {
+        
+            ## Parse Content
+            set :content [odfi::richstream::template::stringToString ${:content}]
+        }
+        
+        +method reduceProduce results {
+        
+            return "<div>[::Markdown::convert ${:content}]</div>"
+        
+        }
+    
     }
 
 }
