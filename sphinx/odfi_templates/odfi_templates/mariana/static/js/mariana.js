@@ -12,16 +12,35 @@ var odfi = {
 
 $(function() {
 
+	// UI Support
+	//-----------------
+	console.log("Setting up table");
+	$("table").each(function(i,e) {
+		$(e).addClass("ui compact table");
+	});
 
+	// Highlight Support
+	//---------------------
+ 
+	hljs.initHighlightingOnLoad();
+
+	// Sticky Menu Setup
+	//------------------------
 	$('#nav-sticky').sticky({
-	    context: '#page-body'
+	    context: '#page-content'
 	  });
 
+	// TOC Conversion
+	//---------------------
 	console.info("Converting TOC 2");
-	//$('ul.current>li').unwrap().wrap("<div/>");
-	$("ul.current").wrap("<div class='ui vertical pointing menu'/>").contents().unwrap();
+
+	
+	//$("ul.current").contents().unwrap();
+	$("#toc > ul").wrap("<div class='ui vertical menu'/>").contents().unwrap();
+	
+	
 	$('.toctree-l1>a').unwrap().wrap("<div class='item'/>").wrap("<div class='header'/>");
-	//.addClass("item");
+
 
 	// Add Animations and SVg manipulations Functions
 	//------------------------------
