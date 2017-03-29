@@ -12,11 +12,20 @@ var odfi = {
 
 $(function() {
 
-	// UI Support
+	// Semantic UI Support
 	//-----------------
 	console.log("Setting up table");
 	$("table").each(function(i,e) {
 		$(e).addClass("ui compact table");
+	});
+
+	$("blockquote").each(function(i,e) {
+		$(e).addClass("ui existing segment");
+	});
+
+	//--- Steps 
+	$(".steps .step .caption").each(function(i,e) {
+		$(e).addClass("ui  info message");
 	});
 
 	// Highlight Support
@@ -66,7 +75,7 @@ $(function() {
 		});
 
 
-		
+		 
 	
 	};
 
@@ -84,6 +93,9 @@ $(function() {
 	};
 	$.fn.fadeout = function() {
 		$(this).animate({opacity: 0.0},500);
+	}; 
+	$.fn.svgHide = function() {
+		$(this).attr("opacity","0.0");
 	};
 	$.fn.move = function(dx,dy) {
 
@@ -114,32 +126,15 @@ $(function() {
 				return found;
 			});
 
-			///return targetElements;
 			return $(newelements);
-			//return $(targetElements).push(calledOn);
+		
 
 		} else {
 			return this;
 		}
 	
-		/*if (arguments) {
-			var calledOn = $(this);
-			var targetElements= $(arguments).map(function(i,targetLabel) {
-
-				var found = $(calledOn).parent().find("*[id='"+targetLabel+"']:first");
-				console.log("Mapping "+targetLabel+" -> "+found+ ", search on: "+calledOn);
-				return found;
-			});
-
-			return targetElements;
-
-		} else {
-			return this;
-		}*/
 		return this;
-		
 
-		//return targetElements.unshift(this);
 	};
 
 
@@ -149,16 +144,6 @@ $(function() {
 	// At the end display pictures
 	//----------------------------------------
 
-	$('svg *[onload]').each(function(i,e) {
-
-		//var p = $(e).parent();
-		//console.info("SVG Width: "+p.width());
-		//$(e).attr("width",""+p.width()+"px");
-
-		console.log("Element has on load: "+e);
-		//$(e).trigger("load");
-
-	});
 
 	$('svg').each(function(i,svg) {
 
@@ -193,6 +178,8 @@ $(function() {
 
 				console.info("Animation Line: "+line);
 
+				// Init Animation
+
 				// SNAP Animation
 				if (line.startsWith("S:")) {
 					var snapLine = line.replace("S:","").trim();
@@ -209,8 +196,8 @@ $(function() {
 						//-- Search Element matching label inkscape\\:
 						//var searchCode = "$(\"*[inkscape\\\\:label='"+targetLabel+"']:first\")";
 						//var targetElement = $("*[label='"+targetLabel+"']:first");
-						var searchCode = "$(\"*[id='"+targetLabel+"']:first\")";
-						var targetElement = $("*[id='"+targetLabel+"']:first");
+						var searchCode = "$(\"*[inkscape\\\\:label='"+targetLabel+"']\")";
+						var targetElement = $("*[inkscape\\:label='"+targetLabel+"']");
 						if (targetElement) {
 
 							//console.info("Found target SVG Element");
@@ -218,7 +205,7 @@ $(function() {
 							//-- animations[animations.length] 
 							animations.push( function() {
 
-								var finalCode = searchCode+"."+animationLine;
+								var finalCode = searchCode+".each(function(i,e) { $(e)."+animationLine+"; });";
 								console.info("Doing Animation Step: "+finalCode);
 								eval(finalCode);
 								
