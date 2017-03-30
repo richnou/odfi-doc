@@ -7,13 +7,24 @@ footer {
 	margin-top:20px;
 }
 
+/** Page container */
+#mariana-page {
+
+	margin: 20px;
+
+}
+
 /** SIDE BAR **/
 
 .ui.sidebar {
 	background-color: lightgray;
 }
 
+.ui.vertical.menu {
+	width: 100%;
+}
 .ui.menu.item {
+	width: 100%;
 	margin-bottom: 2px !important;
 	padding-bottom: 2px !important;
 }

@@ -62,29 +62,21 @@
 <body role="document">
 
 
-  <div id="page" class="ui container">
+  <div id="mariana-page" class="ui grid ">
     
-     <!-- Header -->
-    <!-- ###### -->
-    <div id="header">
-      <h1>{{ project }}</h1>
-      
+
+    <div class="sixteen wide column ui sticky mariana-header">
+        <h1>{{ project }}</h1>
+
     </div>
 
-
-     
-    <div  id="page-body" class="ui segment">
-
-
-      {# Breadcrumbs #}
-      <div id="breadcrumbs">
-        {% include "breadcrumbs.html" %}
-      </div>
-
+    <!-- Menu --> 
+    <div class="four wide column">
+      
         {# Sticky Left Nav #}
-        <div class="left ui rail">
+        <!--<div class="left ui rail">-->
 
-          <div id="nav-sticky" class="ui sticky">
+          <div class="mariana-menu ui sticky">
 
             <!-- Logo -->
             {%- if theme_left_logo %}
@@ -106,47 +98,80 @@
             </div>
           </div>
 
-        </div> 
+        <!--</div> -->
 
+    </div>
 
-        <div id="page-content" role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-            {% block body %}{% endblock %}
-           </div>
-           <div class="articleComments">
-            {% block comments %}{% endblock %}
-           </div>
+    <!-- Page content -->
+    <div class="twelve wide column">
+      
+      {# Breadcrumbs #}
+      <div id="breadcrumbs">
+        {% include "breadcrumbs.html" %}
+      </div>
 
+      <div  id="page-body" class="ui segment">
 
-           
-
-        </div>
-        <!-- Load extra scripts here -->
-          {{ css() }}
-         <script src="{{ pathto('_static/semantic/components/sticky.min.js', 1) }}"></script>
-          <link rel="stylesheet" href="{{ pathto('_static/semantic/components/sticky.min.css', 1) }}" type="text/css" />
-
-          <script src="{{ pathto('_static/js/highlight.pack.min.js', 1) }}"></script>
-
-          {% if theme_highlightjs_style  %}
-          <link rel="stylesheet" href="{{ pathto('_static/css/highlight-styles/'+theme_highlightjs_style+'.css', 1) }}" type="text/css" />
-          {% else %}
-          <link rel="stylesheet" href="{{ pathto('_static/css/highlight-styles/default.css', 1) }}" type="text/css" />
-          {% endif %}
-          <link rel="stylesheet" href="{{ pathto('_static/css/mariana.css', 1) }}" type="text/css" />
-          <script src="{{ pathto('_static/js/snap.svg-min.js', 1) }}"></script>
-          <script src="{{ pathto('_static/js/mariana.js', 1) }}"></script>
-
-        {% include "footer.html" %}
 
         
 
+          
+
+
+          <div id="mariana-page-content" role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <div itemprop="articleBody">
+              {% block body %}{% endblock %}
+             </div>
+             <div class="articleComments">
+              {% block comments %}{% endblock %}
+             </div>
+
+
+             
+
+          </div>
+          <!-- Load extra scripts here -->
+            {{ css() }}
+           <script src="{{ pathto('_static/semantic/components/sticky.min.js', 1) }}"></script>
+            <link rel="stylesheet" href="{{ pathto('_static/semantic/components/sticky.min.css', 1) }}" type="text/css" />
+
+            <script src="{{ pathto('_static/js/highlight.pack.min.js', 1) }}"></script>
+
+            {% if theme_highlightjs_style  %}
+            <link rel="stylesheet" href="{{ pathto('_static/css/highlight-styles/'+theme_highlightjs_style+'.css', 1) }}" type="text/css" />
+            {% else %}
+            <link rel="stylesheet" href="{{ pathto('_static/css/highlight-styles/default.css', 1) }}" type="text/css" />
+            {% endif %}
+            <link rel="stylesheet" href="{{ pathto('_static/css/mariana.css', 1) }}" type="text/css" />
+            <script src="{{ pathto('_static/js/snap.svg-min.js', 1) }}"></script>
+            <script src="{{ pathto('_static/js/mariana.js', 1) }}"></script>
+
+          {% include "footer.html" %}
+
+          
+
+      </div>
+      <!-- EOF page body -->
+
+
     </div>
-    <!-- EOF page body -->
+
+
+     <!-- Header -->
+    <!-- ###### -->
+    <!-- <div id="header">
+      <h1>{{ project }}</h1>
+      
+    </div>
+    -->
+
+     
+    
 
 
   {% block extrabody %} {% endblock %}
   </div>
+  <!-- EOF Page container -->
 
  
 

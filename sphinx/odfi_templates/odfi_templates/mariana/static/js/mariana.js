@@ -15,16 +15,16 @@ $(function() {
 	// Semantic UI Support
 	//-----------------
 	console.log("Setting up table");
-	$("table").each(function(i,e) {
+	$("#mariana-page  table").each(function(i,e) {
 		$(e).addClass("ui compact table");
 	});
 
-	$("blockquote").each(function(i,e) {
+	$("#mariana-page blockquote").each(function(i,e) {
 		$(e).addClass("ui existing segment");
 	});
 
 	//--- Steps 
-	$(".steps .step .caption").each(function(i,e) {
+	$("#mariana-page .steps .step .caption").each(function(i,e) {
 		$(e).addClass("ui  info message");
 	});
 
@@ -33,10 +33,14 @@ $(function() {
  
 	hljs.initHighlightingOnLoad();
 
+	// Sticky Header
+	//------------------------
+	$('#mariana-page .mariana-header').sticky();
+
 	// Sticky Menu Setup
 	//------------------------
-	$('#nav-sticky').sticky({
-	    context: '#page-content'
+	$('#mariana-page .mariana-menu').sticky({
+	    context: '#mariana-page-content'
 	  });
 
 	// TOC Conversion
