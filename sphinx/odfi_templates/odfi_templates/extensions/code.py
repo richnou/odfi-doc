@@ -21,8 +21,12 @@ class Code(nodes.Inline, nodes.Element):
 
 
 def visit_code_node(self, node):
+	if hasattr(node,"language"):
+		lang=('class="%s"' % node.language)
+	else:
+		lang=""
 	self.body.append('<pre>')
-	self.body.append('<code>')
+	self.body.append('<code %s>' % lang)
 	self.body.append("\n".join(node.content))
 
 def depart_code_node(self, node):
@@ -33,10 +37,17 @@ def depart_code_node(self, node):
 
 class OdfiCodeDirective(Directive):
 	has_content = True
-
+	optional_arguments = 1
 	def run(self):
 
 		codeNode = Code()
+
+		## Get language arg
+		print(self.arguments)
+		if len(self.arguments) == 1:
+			codeNode.language = self.arguments[0]
+
+		## Set content
 		codeNode.content = self.content
 		print(self.content)
 
