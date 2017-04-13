@@ -30,8 +30,11 @@ $(function() {
 
 	// Highlight Support
 	//---------------------
- 
-	hljs.initHighlightingOnLoad();
+ 	$('pre code').each(function(i, block) {
+ 		console.log("Highlighting block...");
+    	hljs.highlightBlock(block);
+  	});
+	//hljs.initHighlightingOnLoad();
 
 	// Sticky Header
 	//------------------------
@@ -48,10 +51,8 @@ $(function() {
 	console.info("Converting TOC 2");
 
 	
-	//$("ul.current").contents().unwrap();
+
 	$("#toc > ul").wrap("<div class='ui vertical menu'/>").contents().unwrap();
-	
-	
 	$('.toctree-l1>a').unwrap().wrap("<div class='item'/>").wrap("<div class='header'/>");
 
 

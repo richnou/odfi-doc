@@ -84,11 +84,11 @@
               <img src="{{ pathto('_static/%s' % theme_left_logo, 1) }}" style="width:100%" />
             </div>
             {%- endif %}
-            
+
             <!-- TOC -->
             <div id="toc">
             {% block menu %}
-              {% set global_toc = toctree(maxdepth=theme_navigation_depth|int, collapse=theme_collapse_navigation, includehidden=True) %}
+              {% set global_toc = toctree(maxdepth=theme_navigation_depth|int, collapse=False, includehidden=True) %}
               
               {{ global_toc }} 
            
