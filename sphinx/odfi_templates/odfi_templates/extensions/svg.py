@@ -40,7 +40,7 @@ def visit_svg_node(self, node):
 		if foundElement is None : 
 			return
 
-		print("Found tag:  %s " %(foundElement.tag))
+		print("Found tag2:  %s " %(foundElement.tag))
 
 		## Find defs in source
 		foundDefs = svgRoot.find(".//svg:defs",ns)
@@ -48,15 +48,13 @@ def visit_svg_node(self, node):
 		if foundElement.tag == "{http://www.w3.org/2000/svg}g" :
 
 			foundGroup = foundElement
-			foundGroup = svgRoot.find(".//svg:g[@id='%s']" %(node.groupId),ns)
-			foundGroup.set("x","0")
-			foundGroup.set("y","0")
+			#foundGroup = svgRoot.find(".//svg:g[@id='%s']" %(node.groupId),ns)
 			foundGroup.set("transform","")
 
 			
 
 			## Find top most Y (lowest y) to set transformation to get the group back on top
-			allwithy = foundGroup.findall(".//*[@y]")
+			allwithy = foundGroup.findall("./svg:rect[@y]",ns)
 			allwithx = allwithy
 
 			## First calculate translation in X and Y to substract from all X/Y coordinates
@@ -69,18 +67,8 @@ def visit_svg_node(self, node):
 			minX = float(mostRightFirst[-1].get("x"))
 			minY = float(mostDownFirst[-1].get("y"))
 
-			#translateX = 0 if minX < 0 else minX
-			#translateY = 0 if minY < 0 else minY
-
 			## From here translate all X/Y coordnates because we place back the group to 0/0
 			## This way sizes are correct
-			## Calculate all x+width and sort descending
-			#allXAndWidth = filter(lambda elt: elt.get("x")!=None and elt.get("width")!=None,allwithx)
-			#allMostRightCoordinates = sorted(map(lambda elt: float(elt.get("x")) - translateX + float(elt.get("width")), allXAndWidth),reverse=True)
-			
-			#allYAndHeight = filter(lambda elt: elt.get("y")!=None and elt.get("height")!=None,allwithy)
-			#allMostDownCoordinates = sorted(map(lambda elt: float(elt.get("y"))  - translateY + float(elt.get("height")), allYAndHeight),reverse=True)
-
 			allXAndWidth = filter(lambda elt: elt.get("x")!=None and elt.get("width")!=None,allwithx)
 			allMostRightCoordinates = sorted(map(lambda elt: float(elt.get("x")) - minX + float(elt.get("width")), allXAndWidth),reverse=True)
 			
@@ -93,6 +81,8 @@ def visit_svg_node(self, node):
 			maxY = allMostDownCoordinates[0]
 
 		else:
+
+
 
 			minX = float(foundElement.get("x"))
 			minY = float(foundElement.get("y"))
@@ -111,12 +101,7 @@ def visit_svg_node(self, node):
 		newSvg = ElementTree.fromstring('<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg version="1.1"  xmlns="http://www.w3.org/2000/svg"></svg>')
 		
 
-		## View Box is 0 0 maxX maxY
-
-
-
-		viewBox = "0 0 %s %s" % (maxX,maxY) 
-		newSvg.set("viewBox",viewBox)
+		
 
 		#ally = map(lambda n: float(n.get("y")),allwidthy)
 		#allx = map(lambda n: float(n.get("x")),allwidthx)
@@ -137,6 +122,12 @@ def visit_svg_node(self, node):
 		translateY = minY
 		foundElement.set("transform","translate(%s,%s)" % (-translateX,-translateY))
 	
+
+		## View Box is 0 0 maxX maxY
+		## Min and max are already translated
+		viewBox = "0 0 %s %s" % (maxX,maxY) 
+		newSvg.set("viewBox",viewBox)
+
 
 		##  add group to it
 		newSvg.insert(0,foundElement)
