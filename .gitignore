@@ -7,3 +7,5 @@ target
 **/*.egg-info/*
 **/dist/*
 **/__pycache__/*
+scala/quickrun/.*
+scala/quickrun/config/
