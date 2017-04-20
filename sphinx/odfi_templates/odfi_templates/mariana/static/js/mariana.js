@@ -16,7 +16,10 @@ $(function() {
 	//-----------------
 	console.log("Setting up table");
 	$("#mariana-page  table").each(function(i,e) {
-		$(e).addClass("ui compact table");
+		if (! $(e).hasClass("highlighttable")) {
+			$(e).addClass("ui compact table");
+		}
+		
 	});
 
 	$("#mariana-page blockquote").each(function(i,e) {
