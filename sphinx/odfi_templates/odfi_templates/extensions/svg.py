@@ -54,7 +54,7 @@ def visit_svg_node(self, node):
 			
 
 			## Find top most Y (lowest y) to set transformation to get the group back on top
-			allwithy = foundGroup.findall("./svg:rect[@y]",ns)
+			allwithy = foundGroup.findall("./svg:rect[@y]",ns) + foundGroup.findall("./svg:image[@y]",ns)
 			allwithx = allwithy
 
 			## First calculate translation in X and Y to substract from all X/Y coordinates
