@@ -21,7 +21,7 @@ import org.odfi.wsb.fwapp.assets.ResourcesAssetSource
 import org.odfi.eda.h2dl.tool.msys.MsysInstall
 import org.odfi.indesign.ide.core.ui.tasks.TasksView
 
-object DuckDocQuickRun extends DefaultSiteApp("/duckdoc/quickrun") with HarvesterSite  {
+object DuckDocQuickRun extends DefaultSiteApp("/duckdoc/quickrun") with HarvesterSite {
 
   this.listen(8554)
 
@@ -34,10 +34,20 @@ object DuckDocQuickRun extends DefaultSiteApp("/duckdoc/quickrun") with Harveste
   //----------------
   override def doHarvest = {
 
+    //-- Gather Projects
     DuckDocQuickRun.config.get.getKeyValues("sphinx", "files").foreach {
       projectPath =>
         var sp = new SphinxProject(new File(projectPath))
         gather(sp)
+    }
+
+  }
+
+  Harvest.onHarvestDone {
+    println("Updating Python Path")
+    this.onResources[SphinxProject] {
+      case p =>
+        p.getLiveCompiler[SphinxLiveCompiler].get.putEnvironment("PYTHONPATH", DuckDocQuickRun.config.get.getString("PYTHONPATH", ""))
     }
   }
 
@@ -45,7 +55,7 @@ object DuckDocQuickRun extends DefaultSiteApp("/duckdoc/quickrun") with Harveste
     p =>
 
       // Make sure LC is present
-      p.buildLiveCompiler
+      p.buildLiveCompilers
 
       // Map output
       val index = getResourcesOfType[SphinxProject].indexOf(p)
@@ -76,26 +86,42 @@ object DuckDocQuickRun extends DefaultSiteApp("/duckdoc/quickrun") with Harveste
         h2("Sphinx Projects") {
 
         }
-        
+
         // Make sure projects can be build
         //------------
         MsysHarvester.getResource[MsysInstall] match {
-          case None => 
+          case None =>
             "ui warning message" :: "Cannot find MSYS2, you won't be able to build projects"
             "ui button" :: buttonClick("Install MSYS") {
-              
+
               // http://repo.msys2.org/distrib/msys2-x86_64-latest.exe
             }
-          case Some(msys)  => 
-            "ui primary button" :: taskButton("odfi.templates.update")("Update ODFI Templates","Updating ODFI Templates...") {
-              task => 
-                
+          case Some(msys) =>
+
+            //-- Update Button
+            "ui primary button" :: taskButton("odfi.templates.update")("Update ODFI Templates", "Updating ODFI Templates...") {
+              task =>
+
                 msys.runBashCommand("pip3 install --upgrade odfi_templates", true)
-                
+
             }
-            
+
+            //-- Python Path
+            form {
+              +@("style" -> "margin:10px")
+              "ui field" :: div {
+
+                label("PYTHONPATH") {
+                  val b = DuckDocQuickRun.config.get.getStringAsBuffer("PYTHONPATH", "")
+                  b.onDataUpdate(Harvest.run)
+                  inputToBufferAfter500MS(b)
+                }
+
+              }
+            }
+
         }
-        
+
         // Table of Projects
         //------------------------
 
@@ -148,16 +174,27 @@ object DuckDocQuickRun extends DefaultSiteApp("/duckdoc/quickrun") with Harveste
 
                         project.getLiveCompiler[SphinxLiveCompiler] match {
                           case None =>
+
                             classes("negative")
                             text("Live Compiler Not Online")
+
                           case Some(lc) =>
                             classes("positive")
                             val index = getResourcesOfType[SphinxProject].indexOf(project)
+
                             a(s"/build/$index/index.html") {
                               +@("target" -> "_blank")
-                             text("Live Compiler Online")
+                              text("Live Compiler Online")
                             }
-                            
+
+                            a(s"#") {
+                              text("Rebuild Live Compiler")
+                              onClickReload {
+                                project.buildInvalidateLiveCompilers
+                                project.buildLiveCompilers
+                              }
+                            }
+
                         }
 
                       case None =>
