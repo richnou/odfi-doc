@@ -253,10 +253,109 @@ $(function() {
 		parent.css("visibility","visible");
 
 	});
+	// EOF SVG Special Support
 	
+
+	// PDF JS support
+	//-----------------------
+	console.log("Init pdf js....");
+	//PDFJS.imageResourcesPath = '../web/images/';
+	//PDFJS.workerSrc = 'pdf.worker.js';
+	//PDFJS.cMapUrl = '../web/cmaps/';
+	PDFJS.cMapPacked = true;
+	$(".pdfjs").each(function(i,pdfCanvas) {
+
+		var url = $(pdfCanvas).data("file");
+		PDFJS.getDocument(url).then(function(pdf) {
+			console.log("Loaded PDF");
+			if ($(pdfCanvas).data("page")) {
+				pdfjs.changeToPage(pdfCanvas,pdf,$(pdfCanvas).data("page"));
+			} else {
+				pdfjs.changeToPage(pdfCanvas,pdf,1);
+			}
+			//indesign.pdfjs.pdfDoc[$(canvas).attr("id")] = pdf; 
+			//indesign.pdfjs.changeToPage($(canvas).attr("id"),$(canvas).attr("page"));
+		});
+
+
+	});
+
 
 
 
 	
 
 });
+
+// PDF JS stuff
+//-------------------
+pdfjs={};
+pdfjs.changeToPage =  function(canvas,doc,p) {
+	
+	p = parseInt(p);
+	
+	//-- Get Doc
+	//var doc = indesign.pdfjs.pdfDoc[id];
+	console.log("Changing page  to "+p+ " with available "+doc.numPages);
+	
+	
+	if (p<1 || p > doc.numPages) {
+		return;
+	}
+	
+	// Change Local Page
+	// --------------------
+	doc.getPage(p).then(function(page) {
+		
+		// Update Page
+		//----------
+		var pdfPage = p;
+		console.log("PDF Page...");
+		//var canvas = document.getElementById(id);
+		$(canvas).attr("page",p);
+		var context = canvas.getContext('2d');
+		
+		// Remote Update
+		//-------------
+		//$.get("/h2dl/action/pdfjs.updatePage?page="+p);
+		
+		/*
+		 * var desiredWidth = 100; var viewport = page.getViewport(1);
+		 * var scale = desiredWidth / viewport.width; var scaledViewport =
+		 * page.getViewport(scale);
+		 */
+		
+		
+		
+		var desiredWidth = $(canvas).parent().width();
+		//$(canvas).width(desiredWidth);
+		 var viewport = page.getViewport(1);
+		 var scale = desiredWidth / viewport.width; 
+		 var scaledViewport = page.getViewport(scale);
+		 canvas.height = scaledViewport.height;
+		 canvas.width = scaledViewport.width;
+		 /* var scale = 1.0;
+		var viewport = page.getViewport(scale);
+		var context = canvas.getContext('2d');
+		canvas.height = viewport.height;
+		canvas.width = viewport.width;*/
+		
+		var renderContext = {
+		  canvasContext: context,
+		  viewport: scaledViewport
+		};
+		page.render(renderContext);
+	});
+	
+}
+
+pdfjs.nextPage =  function(id) {
+	
+	// -- Get Current Page
+	indesign.pdfjs.changeToPage("pdfjs-"+id,parseInt($("#pdfjs-"+id).attr("page"))+1);
+}
+pdfjs.previousPage =  function(id) {
+	
+	// -- Get Current Page
+	indesign.pdfjs.changeToPage("pdfjs-"+id,parseInt($("#pdfjs-"+id).attr("page"))-1);
+}

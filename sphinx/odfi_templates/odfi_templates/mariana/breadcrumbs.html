@@ -28,10 +28,10 @@
 
   <div class="ui large breadcrumb"> 
     {% block breadcrumbs %}
-      <a href="{{ pathto(master_doc) }}">{{ _('Docs') }}</a> 
+      <a href="{{ pathto(master_doc) }}">Home</a> 
       {% for doc in parents %}
         <i class="right chevron icon divider"></i>
-        <a href="{{ doc.link|e }}">{{ doc.title }}</a> 
+        <a href="{{ doc.link|e }}" class="section">{{ doc.title }}</a> 
       {% endfor %}
       <i class="right chevron icon divider"></i>
       {{ title }}

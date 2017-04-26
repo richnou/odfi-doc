@@ -18,6 +18,12 @@
     {% endfor %}
 {%- endmacro %}
 
+{%- macro badges() %}
+    {% for badge in theme_badges %}
+      {{ badge }}
+    {% endfor %}
+{%- endmacro %}
+
 
 <!DOCTYPE html>
 <!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
@@ -37,20 +43,13 @@
     <link rel="shortcut icon" href="{{ pathto('_static/' + favicon, 1) }}"/>
   {% endif %}
   
-
-  
-
-  
-
-
   {# Semantic #}
   <script src="{{ pathto('_static/js/jquery-3.1.1.min.js', 1) }}"></script>
   <script src="{{ pathto('_static/semantic/semantic.min.js', 1) }}"></script>
   <link rel="stylesheet" href="{{ pathto('_static/semantic/semantic.min.css', 1) }}" type="text/css" />
 
-
-
-    
+  {# PDFJS #}
+  <script src="{{ pathto('_static/external/pdfjs-1.8.170/build/pdf.js', 1) }}"></script>
 
   {# Keep modernizr in head - http://modernizr.com/docs/#installing #}
   <script src="{{ pathto('_static/js/modernizr.min.js', 1) }}"></script>
@@ -85,6 +84,13 @@
             </div>
             {%- endif %}
 
+            <!-- Badges -->
+            {%- if theme_badges %}
+            <div class="badges">
+            {{ badges() }}
+            </div>
+            {%- endif %}
+
             <!-- TOC -->
             <div id="toc">
             {% block menu %}
@@ -96,6 +102,7 @@
               <!--<div class="local-toc">{{ toc }}</div>-->
             {% endblock %}
             </div>
+
           </div>
 
         <!--</div> -->
