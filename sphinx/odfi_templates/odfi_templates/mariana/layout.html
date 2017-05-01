@@ -8,7 +8,8 @@
 {%- endif %}
   
 {%- macro css() %}
-    <!--<link rel="stylesheet" href="{{ pathto('_static/' + style, 1) }}" type="text/css" />-->
+    <!-- <link rel="stylesheet" href="{{ pathto('_static/' + style, 1) }}" type="text/css" /> -->
+     <link rel="stylesheet" href="{{ pathto('_static/basic.css', 1) }}" type="text/css" />
     <link rel="stylesheet" href="{{ pathto('_static/pygments.css', 1) }}" type="text/css" />
     {%- for cssfile in css_files %}
     <link rel="stylesheet" href="{{ pathto(cssfile, 1) }}" type="text/css" />
@@ -27,7 +28,7 @@
 
 <!DOCTYPE html>
 <!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
   {{ metatags }}
@@ -43,16 +44,11 @@
     <link rel="shortcut icon" href="{{ pathto('_static/' + favicon, 1) }}"/>
   {% endif %}
   
-  {# Semantic #}
-  <script src="{{ pathto('_static/js/jquery-3.1.1.min.js', 1) }}"></script>
-  <script src="{{ pathto('_static/semantic/semantic.min.js', 1) }}"></script>
-  <link rel="stylesheet" href="{{ pathto('_static/semantic/semantic.min.css', 1) }}" type="text/css" />
-
-  {# PDFJS #}
-  <script src="{{ pathto('_static/external/pdfjs-1.8.170/build/pdf.js', 1) }}"></script>
+  
+ 
 
   {# Keep modernizr in head - http://modernizr.com/docs/#installing #}
-  <script src="{{ pathto('_static/js/modernizr.min.js', 1) }}"></script>
+  <!-- <script src="{{ pathto('_static/js/modernizr.min.js', 1) }}"></script> -->
 
   
 
@@ -119,7 +115,8 @@
           {% include "breadcrumbs.html" %}
         </div>
 
-        <div  id="page-body" class="ui segment">
+        <!-- class="ui segment" -->
+        <div  id="page-body" >
 
 
           
@@ -141,18 +138,34 @@
             </div>
             <!-- Load extra scripts here -->
               {{ css() }}
-             <script src="{{ pathto('_static/semantic/components/sticky.min.js', 1) }}"></script>
+              {# Semantic #}
+              <script src="{{ pathto('_static/js/jquery-3.1.1.min.js', 1) }}"></script>
+              <script src="{{ pathto('_static/semantic/semantic.min.js', 1) }}"></script>
+              <link rel="stylesheet" href="{{ pathto('_static/semantic/semantic.min.css', 1) }}" type="text/css" />
+
+              <script src="{{ pathto('_static/semantic/components/sticky.min.js', 1) }}"></script>
               <link rel="stylesheet" href="{{ pathto('_static/semantic/components/sticky.min.css', 1) }}" type="text/css" />
 
               <script src="{{ pathto('_static/js/highlight.pack.min.js', 1) }}"></script>
 
               {% if theme_highlightjs_style  %}
-              <link rel="stylesheet" href="{{ pathto('_static/css/highlight-styles/'+theme_highlightjs_style+'.css', 1) }}" type="text/css" />
+              <!--<link rel="stylesheet" href="{{ pathto('_static/css/highlight-styles/'+theme_highlightjs_style+'.css', 1) }}" type="text/css" /> -->
               {% else %}
-              <link rel="stylesheet" href="{{ pathto('_static/css/highlight-styles/default.css', 1) }}" type="text/css" />
+              <!-- <link rel="stylesheet" href="{{ pathto('_static/css/highlight-styles/default.css', 1) }}" type="text/css" /> -->
               {% endif %}
-              <link rel="stylesheet" href="{{ pathto('_static/css/mariana.css', 1) }}" type="text/css" />
+              
+
+              {## SNAP SVG ##}
               <script src="{{ pathto('_static/js/snap.svg-min.js', 1) }}"></script>
+
+              {# PDFJS #}
+              <script src="{{ pathto('_static/external/pdfjs-1.8.170/build/pdf.js', 1) }}"></script>
+
+              {# PDFJS #}
+              <script src="{{ pathto('_static/external/wavedrom/skins/default.js', 1) }}"></script>
+              <script src="{{ pathto('_static/external/wavedrom/wavedrom.min.js', 1) }}"></script>
+
+              <link rel="stylesheet" href="{{ pathto('_static/css/mariana.css', 1) }}" type="text/css" />
               <script src="{{ pathto('_static/js/mariana.js', 1) }}"></script>
 
             {% include "footer.html" %}

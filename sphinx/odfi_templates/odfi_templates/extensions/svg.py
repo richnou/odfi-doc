@@ -54,7 +54,7 @@ def visit_svg_node(self, node):
 			
 
 			## Find top most Y (lowest y) to set transformation to get the group back on top
-			allwithy = foundGroup.findall("./svg:rect[@y]",ns) + foundGroup.findall("./svg:image[@y]",ns)
+			allwithy = foundGroup.findall(".//svg:rect[@y]",ns) + foundGroup.findall(".//svg:image[@y]",ns)
 			allwithx = allwithy
 
 			## First calculate translation in X and Y to substract from all X/Y coordinates
@@ -150,6 +150,9 @@ def visit_svg_node(self, node):
 		if hasattr(node,'style_center'):
 			targetStyle = targetStyle + ";margin-left:auto;margin-right:auto"
 
+		if hasattr(node,'style_width'):
+			targetStyle = targetStyle + (";width:%s" % node.style_width)
+
 		## Set Container Div width provided style if defined
 		self.body.append('<div class="odfi svg" style="%s">' % (targetStyle))
 		self.body.append(str)
@@ -157,7 +160,19 @@ def visit_svg_node(self, node):
 
 	else:
 		with open(node.source) as f: s = f.read()
+
+		targetStyle= node.style if hasattr(node,'style') else ""
+		if hasattr(node,'style_center'):
+			targetStyle = targetStyle + ";margin-left:auto;margin-right:auto"
+
+		if hasattr(node,'style_width'):
+			targetStyle = targetStyle + (";width:%s" % node.style_width)
+
+		self.body.append('<div class="odfi svg" style="%s">' % (targetStyle))
 		self.body.append(s)
+		self.body.append('</div>')
+
+
 
 def depart_svg_node(self, node):
 	pass
@@ -220,6 +235,10 @@ class OdfiSVGDirective(Directive):
 
 		if "align" in self.arguments and self.arguments[(self.arguments.index('align') +1)] == "center":
 			svgNode.style_center = True
+
+		if ":width:" in self.arguments:
+			svgNode.style_width = self.arguments[(self.arguments.index(':width:') +1)]
+
 
 		## Animation Arguments
 		######################

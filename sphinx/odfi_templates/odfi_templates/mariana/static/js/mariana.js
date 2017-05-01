@@ -26,6 +26,15 @@ $(function() {
 		$(e).addClass("ui existing segment");
 	});
 
+	//-- Two contents
+	$("#mariana-page .two-contents").each(function(i,e) {
+		$(e).addClass("ui grid");
+		$(e).find("div").each(function(i,e) {
+			$(e).addClass("six wide column");
+		});
+	});
+
+
 	//--- Steps 
 	$("#mariana-page .steps .step .caption").each(function(i,e) {
 		$(e).addClass("ui  info message");
@@ -268,11 +277,17 @@ $(function() {
 		var url = $(pdfCanvas).data("file");
 		PDFJS.getDocument(url).then(function(pdf) {
 			console.log("Loaded PDF");
+
+			var container = $(pdfCanvas).parent();
+			$(container).data("pdf",pdf);
+
 			if ($(pdfCanvas).data("page")) {
 				pdfjs.changeToPage(pdfCanvas,pdf,$(pdfCanvas).data("page"));
 			} else {
 				pdfjs.changeToPage(pdfCanvas,pdf,1);
 			}
+
+			
 			//indesign.pdfjs.pdfDoc[$(canvas).attr("id")] = pdf; 
 			//indesign.pdfjs.changeToPage($(canvas).attr("id"),$(canvas).attr("page"));
 		});
@@ -281,6 +296,9 @@ $(function() {
 	});
 
 
+	// Wavedrom
+	//--------------
+	WaveDrom.ProcessAll();
 
 
 	
@@ -290,9 +308,26 @@ $(function() {
 // PDF JS stuff
 //-------------------
 pdfjs={};
+pdfjs.nextPage = function (icon) {
+
+	var container = $(icon).parent().parent();
+	pdfjs.changeToPage($(container).find("canvas")[0],$(container).data("pdf"),$(container).data("page")+1);
+
+};
+
+pdfjs.previousPage = function (icon) {
+
+	var container = $(icon).parent().parent();
+	pdfjs.changeToPage($(container).find("canvas")[0],$(container).data("pdf"),$(container).data("page")-1);
+
+};
+
 pdfjs.changeToPage =  function(canvas,doc,p) {
 	
 	p = parseInt(p);
+
+	var container = $(canvas).parent();
+	$(container).data("page",p);
 	
 	//-- Get Doc
 	//var doc = indesign.pdfjs.pdfDoc[id];
@@ -349,7 +384,7 @@ pdfjs.changeToPage =  function(canvas,doc,p) {
 	
 }
 
-pdfjs.nextPage =  function(id) {
+/*pdfjs.nextPage =  function(id) {
 	
 	// -- Get Current Page
 	indesign.pdfjs.changeToPage("pdfjs-"+id,parseInt($("#pdfjs-"+id).attr("page"))+1);
@@ -358,4 +393,4 @@ pdfjs.previousPage =  function(id) {
 	
 	// -- Get Current Page
 	indesign.pdfjs.changeToPage("pdfjs-"+id,parseInt($("#pdfjs-"+id).attr("page"))-1);
-}
+}*/

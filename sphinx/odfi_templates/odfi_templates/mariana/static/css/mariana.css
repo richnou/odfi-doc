@@ -15,30 +15,62 @@ footer {
 	line-height: 24px !important;
 
 }
+#mariana-page ul {
+	font-size: 16px !important;
+}
 
-.ui.segment p {
+#mariana-page .ui.segment p {
 	font-size: 16px !important;
 	line-height: 24px !important;
 }
 
-#mariana-page .badges {
 
-	margin: 5px;
-	vertical-align: middle;
-
-}
-
-#mariana-page .badges a {
-
-	margin-left: 5px;
-	margin-top: auto;
-	margin-bottom: auto;
-	vertical-align: middle;
-
-}
+/** IMG and Figure **/
 
 #mariana-page img {
-	/*width: 100%;*/
+	max-width: 100%;
+}
+
+#mariana-page div.figure {
+	
+	text-align:center;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 20px;
+	margin-top: 20px;
+	
+}
+
+#mariana-page .figure span.caption-text {
+	
+	font-style: italic;
+	
+	
+	/*background-color: lightgray;*/
+}
+
+/** Two content container */
+#mariana-page .two-contents {
+	margin-left: auto;
+	margin-right: auto;
+	display: table;
+	margin-bottom: 20px;
+}
+
+
+
+#mariana-page .two-contents div  {
+	/*float: right;
+	display: inline-block;
+	position: relative;*/
+	display: table-cell !important;
+    vertical-align: middle;
+}
+
+/** Rubric **/
+#mariana-page p.rubric {
+	font-weight: bold;
+	border-bottom: 1px solid gray;
 }
 
 /** SIDE BAR **/
@@ -120,4 +152,21 @@ blockquote {
     border: 1px solid #ccc;
     border-radius: 2px;
     background-color: #f8f8f8;
+}
+
+
+#mariana-page .badges {
+
+	margin: 5px;
+	vertical-align: middle;
+
+}
+
+#mariana-page .badges a {
+
+	margin-left: 5px;
+	margin-top: auto;
+	margin-bottom: auto;
+	vertical-align: middle;
+
 }

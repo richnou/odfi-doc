@@ -26,23 +26,42 @@ class Pdf(nodes.Inline, nodes.Element):
 
 
 def visit_pdf_node(self, node):
-	print("Visit pdf: ",self.builder,"\n")
+	
+	#print("Visit pdf: ",self.builder,"\n")
 	
 	finalPath = posixpath.join(self.builder.dlpath,node.fileName)
 	self.builder.env.dlfiles[node.file] = [node.file,node.fileName]
 	#self.builder.images[node.file]= "lecture"
-	self.body.append('<canvas class="pdfjs" data-file="%s">' %(finalPath))
+	classes = "pdfjs"
+	if node.sticky is True:
+		classes = classes+" ui sticky"
 
+	self.body.append('<div id="pdfjs-container">')
+	self.body.append('<canvas class="%s" data-file="%s"></canvas>' %(classes,finalPath))
+	self.body.append('<div class="pdfjs-controls">')
+	self.body.append('<i class="ui left arrow icon" onclick="pdfjs.previousPage(this);"></i>')
+	self.body.append('<i class="ui right arrow icon" onclick="pdfjs.nextPage(this);"></i>')
+	self.body.append('</div>')
 
 def depart_pdf_node(self, node):
-	self.body.append('</canvas>')
+	self.body.append('</div>')
 
+
+#self.body.append('</canvas>')
+
+class OdfiPdfPageDirective(Directive):
+
+	optional_arguments = 1
+
+	def run(self):
+
+		print("PDF Page: ",self.arguments[0])
 
 
 
 class OdfiPdfDirective(Directive):
 	has_content = True
-	optional_arguments = 1
+	optional_arguments = 2
 	def run(self):
 
 		pdfNode = Pdf()
@@ -72,6 +91,13 @@ class OdfiPdfDirective(Directive):
 		## Set content
 		pdfNode.content = self.content
 
+		## Sticky
+		if ":sticky:" in self.arguments:
+			pdfNode.sticky = True
+		else:
+			pdfNode.sticky = False
+
+
 		return [pdfNode]
 
 
@@ -82,7 +108,7 @@ def setup(app):
 	"""html=(visit_OdfiSVG_node, depart_OdfiSVG_node)"""
 	app.add_node(Pdf, html=(visit_pdf_node, depart_pdf_node))
 	app.add_directive('odfi.pdf',OdfiPdfDirective)
-
+	app.add_role('odfi.pdfPage',OdfiPdfPageDirective)
 
 
 	return {'version': '1.0.0'}

@@ -3,6 +3,7 @@ set :name duckdoc
 :requirements {
 
     :module tcl/devlib
+    :module java/maven
 }
 
 
@@ -16,6 +17,24 @@ set :name duckdoc
 
 ## Virtual Command
 ##########
+:module quickrun {
+
+    :command build {
+        puts "Building Quickrun"
+    }
+    :command start {
+
+        :log:raw "Building and Starting quickrun"
+
+
+    }
+
+
+}
+
+:command qc {
+    puts "QC"
+}
 
 :command start {
 

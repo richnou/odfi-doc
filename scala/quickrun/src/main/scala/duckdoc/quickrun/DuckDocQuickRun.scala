@@ -47,7 +47,10 @@ object DuckDocQuickRun extends DefaultSiteApp("/duckdoc/quickrun") with Harveste
     println("Updating Python Path")
     this.onResources[SphinxProject] {
       case p =>
-        p.getLiveCompiler[SphinxLiveCompiler].get.putEnvironment("PYTHONPATH", DuckDocQuickRun.config.get.getString("PYTHONPATH", ""))
+        p.getLiveCompiler[SphinxLiveCompiler] match {
+          case Some(lc) => lc.putEnvironment("PYTHONPATH", DuckDocQuickRun.config.get.getString("PYTHONPATH", ""))
+          case None     =>
+        }
     }
   }
 
@@ -154,6 +157,7 @@ object DuckDocQuickRun extends DefaultSiteApp("/duckdoc/quickrun") with Harveste
                     "ui delete icon" :: iconClickReload {
 
                       sphinxKey.values -= project
+                      DuckDocQuickRun.saveConfig
                       Harvest.run
 
                     }
@@ -187,14 +191,14 @@ object DuckDocQuickRun extends DefaultSiteApp("/duckdoc/quickrun") with Harveste
                               text("Live Compiler Online")
                             }
 
-                            a(s"#") {
-                              text("Rebuild Live Compiler")
-                              onClickReload {
-                                project.buildInvalidateLiveCompilers
-                                project.buildLiveCompilers
-                              }
-                            }
+                        }
 
+                        a(s"#") {
+                          text("Rebuild Live Compiler")
+                          onClickReload {
+                            project.buildInvalidateLiveCompilers
+                            project.buildLiveCompilers
+                          }
                         }
 
                       case None =>
