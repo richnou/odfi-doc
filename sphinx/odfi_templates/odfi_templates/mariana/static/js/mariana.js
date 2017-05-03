@@ -40,6 +40,20 @@ $(function() {
 		$(e).addClass("ui  info message");
 	});
 
+	//-- Admonitions
+	$(".admonition.warning").each(function(i,e) {
+		$(e).addClass("ui warning message");
+		$(e).find("p:first").addClass("header");
+	});
+	$(".admonition.tip").each(function(i,e) {
+		$(e).addClass("ui info message");
+		$(e).find("p:first").addClass("header");
+	});
+	$(".admonition.hint").each(function(i,e) {
+		$(e).addClass("ui positive message");
+		$(e).find("p:first").addClass("header");
+	});
+
 	// Highlight Support
 	//---------------------
  	$('pre code').each(function(i, block) {
@@ -54,7 +68,7 @@ $(function() {
 	console.info("Converting TOC 2");
 
 	$("#toc > ul").wrap("<div class='ui vertical menu'/>").contents().unwrap();
-	$('.toctree-l1>a').unwrap().wrap("<div class='item'/>").wrap("<div class='header'/>");
+	$('#toc >> .toctree-l1>a').unwrap().wrap("<div class='item'/>").wrap("<div class='header'/>");
 
 
 	// Sticky Header
