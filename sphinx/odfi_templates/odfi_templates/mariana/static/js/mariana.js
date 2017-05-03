@@ -48,25 +48,28 @@ $(function() {
   	});
 	//hljs.initHighlightingOnLoad();
 
-	// Sticky Header
-	//------------------------
-	$('#mariana-page .mariana-header').sticky();
-
-	// Sticky Menu Setup
-	//------------------------
-	$('#mariana-page .mariana-menu').sticky({
-	    context: '#mariana-page-content'
-	  });
 
 	// TOC Conversion
 	//---------------------
 	console.info("Converting TOC 2");
 
-	
-
 	$("#toc > ul").wrap("<div class='ui vertical menu'/>").contents().unwrap();
 	$('.toctree-l1>a').unwrap().wrap("<div class='item'/>").wrap("<div class='header'/>");
 
+
+	// Sticky Header
+	//------------------------
+	//$('#mariana-page .mariana-header').sticky();
+
+	// Sticky Menu Setup
+	//------------------------
+	/*$('#mariana-page .mariana-menu').sticky({
+	    context: '#mariana-page-content'
+	  });*/
+    $('#mariana-page .mariana-menu #toc').sticky();
+
+	// General Sticky
+	//-------------------
 
 	// Add Animations and SVg manipulations Functions
 	//------------------------------
