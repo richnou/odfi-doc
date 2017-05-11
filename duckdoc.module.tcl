@@ -17,6 +17,20 @@ set :name duckdoc
 
 ## Virtual Command
 ##########
+:command quickrun {
+
+    if {[:hasArgument -build]} {
+        :log:info "Building Quickrun"
+    } else {
+        :log:info "Starting Quickrun"
+
+        :changeToModuleDir scala/quickrun
+        #cd [[:getModule] @> getDirectory]/scala/quickrun
+        #exec mvn net.alchim31.maven:scala-maven-plugin:3.2.1:run -Dmaven.scala.className=duckdoc.quickrun.DuckDockQuickRun >@stdout <@stdin 2>@1
+        exec mvn compile scala:run -DmainClass=duckdoc.quickrun.DuckDocQuickRun >@stdout <@stdin 2>@1
+    }
+
+}
 :module quickrun {
 
     :command build {

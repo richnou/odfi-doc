@@ -53,6 +53,14 @@ $(function() {
 		$(e).addClass("ui positive message");
 		$(e).find("p:first").addClass("header");
 	});
+	$(".admonition-question").each(function(i,e) {
+		$(e).addClass("ui teal message");
+		$(e).find("p:first").addClass("header");
+	});
+	$(".admonition-todo").each(function(i,e) {
+		$(e).addClass("ui orange message");
+		$(e).find("p:first").addClass("header");
+	});
 
 	// Highlight Support
 	//---------------------

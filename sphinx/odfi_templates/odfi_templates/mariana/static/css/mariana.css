@@ -24,6 +24,12 @@ footer {
 	line-height: 24px !important;
 }
 
+#mariana-page .header {
+	font-size: smaller;
+
+
+}
+
 /** Menu and Content**/
 .contents.local.topic {
 	margin-bottom: 10px;
