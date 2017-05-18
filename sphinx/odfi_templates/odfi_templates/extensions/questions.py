@@ -6,7 +6,6 @@ from os.path import dirname
 import posixpath
 from docutils import nodes
 from docutils.parsers.rst import Directive
-from sphinx.util.compat import make_admonition
 from sphinx.locale import _
 from sphinx.domains import _
 
@@ -36,12 +35,29 @@ class QuestionDirective(Directive):
 
 		targetid = "question-%d" % env.new_serialno('question')
 		targetnode = nodes.target('', '', ids=[targetid])
+ 
 
-		ad = make_admonition(Question, self.name, [_('Question')], self.options,
-							self.content, self.lineno, self.content_offset,
-							self.block_text, self.state, self.state_machine)
+		ad = Question('\n'.join(self.content))
+		ad += nodes.title(_('Question'), _('Question'))
+		#ad += nodes.class(_('Question'), _('Question'))
+		self.state.nested_parse(self.content, self.content_offset, ad)
+		ad.attributes["classes"] =  ["question"]
+		#ad.options["class"] = "question"
 
-		return [targetnode] + ad
+		#ad = Question()
+		#ad.name = self.name 
+		#ad.content_offset = self.content_offset 
+		#ad.options = self.options 
+		#ad.content = self.content 
+		#ad.block_text = self.block_text
+		#ad.state = self.state
+		#ad.state_machine = self.state_machine
+
+		#ad = make_admonition(Question, self.name, [_('Question')], self.options,
+		#					self.content, self.lineno, self.content_offset,
+		#					self.block_text, self.state, self.state_machine)
+
+		return [targetnode,ad]
 
 
 def visit_question_node(self, node):

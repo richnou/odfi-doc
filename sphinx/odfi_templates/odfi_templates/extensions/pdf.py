@@ -6,7 +6,6 @@ from os.path import dirname
 import posixpath
 from docutils import nodes
 from docutils.parsers.rst import Directive
-from sphinx.util.compat import make_admonition
 from sphinx.locale import _
 
 
@@ -97,7 +96,7 @@ class OdfiPdfDirective(Directive):
 		else:
 			pdfNode.sticky = False
 
-		
+
 
 		return [pdfNode]
 

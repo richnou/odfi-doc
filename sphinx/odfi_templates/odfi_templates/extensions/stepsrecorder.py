@@ -7,7 +7,6 @@ from os.path import dirname
 
 from docutils import nodes
 from docutils.parsers.rst import Directive
-from sphinx.util.compat import make_admonition
 from sphinx.locale import _
 
 
