@@ -73,8 +73,8 @@ $(function() {
 
 	// TOC Conversion
 	//---------------------
-	console.info("Converting TOC 2");
-
+	//console.info("Converting TOC 2");
+	$("#toc .caption").remove();
 	$("#toc > ul").wrap("<div class='ui vertical menu'/>").contents().unwrap();
 	$('#toc >> .toctree-l1>a').unwrap().wrap("<div class='item'/>").wrap("<div class='header'/>");
 

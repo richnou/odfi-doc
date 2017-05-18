@@ -61,7 +61,7 @@ class OdfiPdfPageDirective(Directive):
 
 class OdfiPdfDirective(Directive):
 	has_content = True
-	optional_arguments = 2
+	optional_arguments = 10
 	def run(self):
 
 		pdfNode = Pdf()
@@ -97,6 +97,7 @@ class OdfiPdfDirective(Directive):
 		else:
 			pdfNode.sticky = False
 
+		
 
 		return [pdfNode]
 

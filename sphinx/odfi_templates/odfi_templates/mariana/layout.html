@@ -90,7 +90,7 @@
             <!-- TOC -->
             <div id="toc">
             {% block menu %}
-              {% set global_toc = toctree(maxdepth=theme_navigation_depth|int, collapse=False, includehidden=True) %}
+              {% set global_toc = toctree(maxdepth=theme_navigation_depth|int, collapse=False, includehidden=True,titles_only=False) %}
               
               {{ global_toc }} 
            
