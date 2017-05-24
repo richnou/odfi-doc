@@ -30,12 +30,16 @@ def visit_pdf_node(self, node):
 	
 	finalPath = posixpath.join(self.builder.dlpath,node.fileName)
 	self.builder.env.dlfiles[node.file] = [node.file,node.fileName]
+
+	containerClasses = ""
+	if node.sticky is True:
+		containerClasses = containerClasses +" ui sticky"
+
 	#self.builder.images[node.file]= "lecture"
 	classes = "pdfjs"
-	if node.sticky is True:
-		classes = classes+" ui sticky"
+	
 
-	self.body.append('<div id="pdfjs-container">')
+	self.body.append('<div id="pdfjs-container" class="%s">' % (containerClasses))
 	self.body.append('<canvas class="%s" data-file="%s"></canvas>' %(classes,finalPath))
 	self.body.append('<div class="pdfjs-controls">')
 	self.body.append('<i class="ui left arrow icon" onclick="pdfjs.previousPage(this);"></i>')
